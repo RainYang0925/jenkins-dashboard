@@ -1,0 +1,22 @@
+.masonry {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.masonry .job {
+  width:  400px;
+  height: 100px;
+  margin: 10px 20px 10px 10px;
+}
+
+.job {
+	border: 1px green solid;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 100px;
+	color: white;
+}
+
+body {
+	background-color: #00FF00;
+}

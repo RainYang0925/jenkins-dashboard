@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="refresh" content="300">
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/masonry/3.1.2/masonry.pkgd.min.js"></script>
+	<link rel=stylesheet type="text/css" href="css/main.css"></link>
+</head>
+<body>
+<h1>Dashboard</h1>
+<h2>Next-JS</h2>
+<div class="masonry js-masonry"  data-masonry-options='{ "columnWidth": ".job", "itemSelector": ".job", "isFitWidth": true, "gutter": 10}'>
+	
+	{% for jobWithStatus in jobsWithStatuses %}
+	<div class="job" style="background-color: {% if jobWithStatus[1] == 'SUCCESS' %} green {% elif jobWithStatus[1] == 'FAILURE' %} red {% else %} gray {% endif %};">
+			{{jobWithStatus[0]}}
+	</div>
+	{% endfor %}
+</div>
+
+<div class='culprits'>
+	<h2>Culprits</h2>
+	{% if failuresWithCulprits.length > 0 %}
+	<ul>
+		{% for failure in failuresWithCulprits %}
+			<li>{{failure|join(': ')}}</li>
+		{% endfor %}
+	</ul>
+	{% endif %}
+</div>
+</body>
+</html>
