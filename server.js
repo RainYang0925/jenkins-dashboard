@@ -13,7 +13,7 @@ server.use(express.static(path.join(__dirname, 'static')));
 
 server.get("/", start);
 
-var auth_key = process.env.AUTH_KEY || undefined;
+var auth_key = process.env.AUTH_KEY;
 
 
 function start(request , response){
