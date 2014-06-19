@@ -13,7 +13,7 @@ server.use(express.static(path.join(__dirname, 'static')));
 
 server.get("/", start);
 
-
+var auth_key = process.env.AUTH_KEY || undefined;
 
 
 function start(request , response){
@@ -88,7 +88,7 @@ function fetchConsoleOutputForJob(jobName, _callback) {
 		var options = {
 			host: 'jenkins.prezi.com',
 			path: '/job/' + jobName + '/lastBuild/logText/progressiveText',
-			headers: {'Authorization': 'Basic ***REMOVED***'} 
+			headers: {'Authorization': 'Basic ' + auth_key} 
 		}
 
 		https.get(options, function(res){
@@ -110,7 +110,7 @@ function fetchResultBuildForJob(jobName, _callback) {
 		var options = {
 			host: 'jenkins.prezi.com',
 			path: '/job/'+ jobName +'/lastBuild/api/json',
-			headers: {'Authorization': 'Basic ***REMOVED***'} 
+			headers: {'Authorization': 'Basic ' + auth_key} 
 		}
 		https.get(options, function(res){
 			res.on("data", function(body) {
