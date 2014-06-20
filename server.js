@@ -18,20 +18,23 @@ var auth_key = process.env.AUTH_KEY;
 
 function start(request , response){
 	var dataReceived;
-	var jobsResults = [];
+	var jobsResults = []; // {jobName , buildResultStatus , linkOnJenkins , flagIsBuilding}
+	var jobsJenkinsLinks = [];
 	var culprits = [];
 	var jobs = []
 
 	lineReader.eachLine('jenkins-projects', function(jobName) {
-		var lastBuildData = fetchResultBuildForJob(jobName, callback);
+		var lastBuildData = fetchOperationInJSON(jobName , "lastBuild" ,  callback);
 		jobs.push(jobName);
 	});
 
 	var callback = function(_jobName, _res) {
 			dataReceived = _res;
 			
-			var buildResultStatus = getResultStatus(dataReceived);
-			jobsResults.push([_jobName, buildResultStatus]);
+			var buildResultStatus = getValueFromJSON(dataReceived , 'result');
+			var flagIsBuilding = getValueFromJSON(dataReceived , 'building');
+
+			jobsResults.push([_jobName, buildResultStatus , 'https://jenkins.prezi.com/job/' + _jobName + '/lastBuild/' , flagIsBuilding]);
 			var culpritsForCurrentJob = findCulpritsIfFailure(buildResultStatus, dataReceived);
 
 			if (culpritsForCurrentJob != null && culpritsForCurrentJob.length > 0) {
@@ -41,6 +44,7 @@ function start(request , response){
 				});
 				
 				culprits.push([_jobName, culpritsForCurrentJob]);
+				jobsJenkinsLinks.push( );
 			}
 
 			if (jobsResults.length == jobs.length) {
@@ -49,14 +53,13 @@ function start(request , response){
 	}
 }
 
-
-function getResultStatus(data) {
+function getValueFromJSON(data , key) {
 		try {
 			var jsonData = JSON.parse(data);
 		} catch (e) {
 			return 'NONE';
 		}
-		return jsonData['result'] || 'NONE';
+		return jsonData[key] || 'NONE';
 }
 
 function findCulpritsIfFailure(resultsStatus, dataFromJenkins) {
@@ -105,11 +108,11 @@ function fetchConsoleOutputForJob(jobName, _callback) {
 		});
 }
 
-function fetchResultBuildForJob(jobName, _callback) {
+function fetchOperationInJSON(jobName, operationName , _callback) {
 	var results = "";
 		var options = {
 			host: 'jenkins.prezi.com',
-			path: '/job/'+ jobName +'/lastBuild/api/json',
+			path: '/job/'+ jobName + '/' + operationName + '/api/json',
 			headers: {'Authorization': 'Basic ' + auth_key} 
 		}
 		https.get(options, function(res){
