@@ -1,6 +1,6 @@
 boxfish-engine-render
 boxfish-client-player
-boxfish-client-loader
+boxfish-client-loader-trigger
 pdom-haxe
 boxfish-bdd-tests
 boxfish-bdd-tests-all-browsers
