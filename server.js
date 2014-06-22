@@ -19,7 +19,6 @@ var auth_key = process.env.AUTH_KEY;
 function start(request , response){
 	var dataReceived;
 	var jobsResults = []; // {jobName , buildResultStatus , linkOnJenkins , flagIsBuilding}
-	var jobsJenkinsLinks = [];
 	var culprits = [];
 	var jobs = []
 
@@ -34,7 +33,13 @@ function start(request , response){
 			var buildResultStatus = getValueFromJSON(dataReceived , 'result');
 			var flagIsBuilding = getValueFromJSON(dataReceived , 'building');
 
-			jobsResults.push([_jobName, buildResultStatus , 'https://jenkins.prezi.com/job/' + _jobName + '/lastBuild/' , flagIsBuilding]);
+			jobsResults.push( {
+				jobName : _jobName ,
+				buildResultStatus : buildResultStatus , 
+				linkOnJenkins : 'https://jenkins.prezi.com/job/' + _jobName + '/lastBuild/' ,
+				flagIsBuilding : flagIsBuilding
+			});
+			
 			var culpritsForCurrentJob = findCulpritsIfFailure(buildResultStatus, dataReceived);
 
 			if (culpritsForCurrentJob != null && culpritsForCurrentJob.length > 0) {
@@ -44,7 +49,6 @@ function start(request , response){
 				});
 				
 				culprits.push([_jobName, culpritsForCurrentJob]);
-				jobsJenkinsLinks.push( );
 			}
 
 			if (jobsResults.length == jobs.length) {
