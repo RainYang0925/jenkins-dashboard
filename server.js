@@ -15,29 +15,74 @@ server.get("/", start);
 
 var auth_key = process.env.AUTH_KEY;
 
-
-function JenkinsJobItem (jobName , buildResultStatus , linkOnJenkins , flagIsBuilding){
-		this.jobName = jobName;
-		this.buildResultStatus = buildResultStatus;
-		this.linkOnJenkins = linkOnJenkins;
-		this.flagIsBuilding = flagIsBuilding;
-}
 function start(request , response){
 	var dataReceived;
 	var jobsResults = [];
 	var culprits = [];
 	var jobs = [];
+	var flowsList = [];
+	var allflowsResults = [];
+
 	lineReader.eachLine('jenkins-projects', function(jobName) {
-		var lastBuildData = fetchOperationInJSON(jobName , "lastBuild" ,  callback);
 		jobs.push(jobName);
+	}).then(function() {
+		for (i in jobs) {
+			fetchOperationInJSON(jobs[i] , "lastBuild" ,  callback);
+		}
 	});
+
+	lineReader.eachLine('jenkins-flows', function(flowName) {
+		flowsList.push(flowName);
+	}).then(function() {
+		for (i in flowsList) {
+			fetchConsoleOutputForJob(flowsList[i] , getAllBuildsStatuses);
+		}
+	});
+	var getAllBuildsStatuses = function(flowName , consoleResult){
+		
+		var patterns = [ 
+			/\s*Schedule job (.+)/ , 
+			/\s*Build (.+) #([0-9]+) started/ ,
+			/\s*(.+) #([0-9]+) completed/ ,
+			/\s*(.+) #([0-9]+) completed\s*: FAILURE/
+		];
+
+		var jobsStatuses = [
+			'Scheduling',
+			'Building',
+			'Completed' ,
+			'Failed'
+		];
+		var jobsResults = [];
+
+
+		var resultLines = consoleResult.split('\n');
+	
+		for (rl in resultLines) {
+
+		    for(i in patterns) {    
+
+		        var matches = patterns[i].exec(resultLines[rl]);
+		        if (matches == null || matches.length < 1) continue;
+
+		   		var jobName = matches[1];
+		   		jobsResults[jobName] = jobsStatuses[i];
+		        
+		    }
+		}
+		allflowsResults[flowName] = jobsResults;
+
+		if(Object.keys(allflowsResults).length == flowsList.length){
+			console.log(allflowsResults);
+			// TODO : rendering the results , and visulizing it on the index.html.
+		}
+	}
 
 	var callback = function(_jobName, _res) {
 			dataReceived = _res;
 			
 			var buildResultStatus = getValueFromJSON(dataReceived , 'result');
 			var flagIsBuilding = getValueFromJSON(dataReceived , 'building');
-
 
 			jobsResults.push( new JenkinsJobItem(_jobName , buildResultStatus , 'https://jenkins.prezi.com/job/' + _jobName + '/lastBuild/'
 			 , flagIsBuilding ) );
@@ -54,9 +99,21 @@ function start(request , response){
 			}
 
 			if (jobsResults.length == jobs.length) {
+
+				jobsResults.sort(function(a , b){
+					return a.jobName.localeCompare(b.jobName);
+				});
 				response.render('index.html', {jobsWithStatuses: jobsResults, failuresWithCulprits: culprits});
 			}
 	}
+}
+
+
+function JenkinsJobItem (jobName , buildResultStatus , linkOnJenkins , flagIsBuilding){
+		this.jobName = jobName;
+		this.buildResultStatus = buildResultStatus;
+		this.linkOnJenkins = linkOnJenkins;
+		this.flagIsBuilding = flagIsBuilding;
 }
 
 function getValueFromJSON(data , key) {
@@ -65,7 +122,7 @@ function getValueFromJSON(data , key) {
 		} catch (e) {
 			return 'NONE';
 		}
-		return jsonData[key] || 'NONE';
+		return jsonData[key] !== null ? jsonData[key].toString() : 'NONE';
 }
 
 function findCulpritsIfFailure(resultsStatus, dataFromJenkins) {
@@ -92,33 +149,32 @@ function displayResults(_a) {
 }
 
 
-function fetchConsoleOutputForJob(jobName, _callback) {
+function fetchConsoleOutputForJob(flowName, _callback) {
 	var results = "";
 		var options = {
 			host: 'jenkins.prezi.com',
-			path: '/job/' + jobName + '/lastBuild/logText/progressiveText',
+			path: ('/job/' + flowName + '/lastBuild/logText/progressiveText').replace(/\s/g,"%20"),
 			headers: {'Authorization': 'Basic ' + auth_key} 
 		}
-
 		https.get(options, function(res){
 			res.on("data", function(body) {
 				results += body.toString();
 			});
 
 			res.on("end", function() {
-				_callback(jobName, results);
+				_callback(flowName, results);
 			});
 
 		}).on("error", function(e) {
 			console.log("error :" + e.message);
 		});
 }
-
+	
 function fetchOperationInJSON(jobName, operationName , _callback) {
 	var results = "";
 		var options = {
 			host: 'jenkins.prezi.com',
-			path: '/job/'+ jobName + '/' + operationName + '/api/json',
+			path: ('/job/'+ jobName + '/' + operationName + '/api/json').replace(/\s/g,"%20"),
 			headers: {'Authorization': 'Basic ' + auth_key} 
 		}
 		https.get(options, function(res){
