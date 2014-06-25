@@ -21,13 +21,16 @@ function start(request , response){
 	var culprits = [];
 	var jobs = [];
 	var flowsList = [];
-	var allflowsResults = [];
+	var allFlowsResults = [];
+
+	var isFlowFinished = false;
+	var isJobFinished = false;
 
 	lineReader.eachLine('jenkins-projects', function(jobName) {
 		jobs.push(jobName);
 	}).then(function() {
 		for (i in jobs) {
-			fetchOperationInJSON(jobs[i] , "lastBuild" ,  callback);
+			fetchOperationInJSON(jobs[i] , "lastBuild" ,  getJobStatus);
 		}
 	});
 
@@ -53,58 +56,77 @@ function start(request , response){
 			'Completed' ,
 			'Failed'
 		];
-		var jobsResults = [];
 
 
 		var resultLines = consoleResult.split('\n');
+		var flowResult = [];
 	
 		for (rl in resultLines) {
 
-		    for(i in patterns) {    
+		    for (i in patterns) {    
 
 		        var matches = patterns[i].exec(resultLines[rl]);
 		        if (matches == null || matches.length < 1) continue;
 
 		   		var jobName = matches[1];
-		   		jobsResults[jobName] = jobsStatuses[i];
+		   		flowResult[jobName] = jobsStatuses[i];
 		        
 		    }
 		}
-		allflowsResults[flowName] = jobsResults;
+		var flowResultArray = [];
+		for(var jobName in flowResult){
 
-		if(Object.keys(allflowsResults).length == flowsList.length){
-			console.log(allflowsResults);
-			// TODO : rendering the results , and visulizing it on the index.html.
+			flowResultArray.push({
+		   		jobName: jobName,
+		   		jobStatus: flowResult[jobName]
+		   	});
+		}
+
+
+		allFlowsResults.push({
+			flowName: flowName,
+			jobsResults: flowResultArray
+		}); 
+
+		if (allFlowsResults.length == flowsList.length){
+			isFlowFinished = true;
+			allFlowsResults.sort(function(a , b){
+				return a.flowName.localeCompare(b.flowName);
+			});
+			if (isJobFinished)
+				response.render('index.html' , {allFlowsResults : allFlowsResults , jobsWithStatuses: jobsResults, failuresWithCulprits: culprits} );
 		}
 	}
 
-	var callback = function(_jobName, _res) {
-			dataReceived = _res;
+	var getJobStatus = function(_jobName, _res) {
+		dataReceived = _res;
 			
-			var buildResultStatus = getValueFromJSON(dataReceived , 'result');
-			var flagIsBuilding = getValueFromJSON(dataReceived , 'building');
+		var buildResultStatus = getValueFromJSON(dataReceived , 'result');
+		var flagIsBuilding = getValueFromJSON(dataReceived , 'building');
 
-			jobsResults.push( new JenkinsJobItem(_jobName , buildResultStatus , 'https://jenkins.prezi.com/job/' + _jobName + '/lastBuild/'
+		jobsResults.push( new JenkinsJobItem(_jobName , buildResultStatus , 'https://jenkins.prezi.com/job/' + _jobName + '/lastBuild/'
 			 , flagIsBuilding ) );
 			
-			var culpritsForCurrentJob = findCulpritsIfFailure(buildResultStatus, dataReceived);
+		var culpritsForCurrentJob = findCulpritsIfFailure(buildResultStatus, dataReceived);
 
-			if (culpritsForCurrentJob != null && culpritsForCurrentJob.length > 0) {
+		if (culpritsForCurrentJob != null && culpritsForCurrentJob.length > 0) {
 
-				culpritsForCurrentJob = culpritsForCurrentJob.filter(function (value, index, self) { 
+			culpritsForCurrentJob = culpritsForCurrentJob.filter(function (value, index, self) { 
     				return self.indexOf(value) === index;
-				});
+			});
 				
-				culprits.push([_jobName, culpritsForCurrentJob]);
-			}
+			culprits.push([_jobName, culpritsForCurrentJob]);
+		}
+		
+		if (jobsResults.length == jobs.length) {
 
-			if (jobsResults.length == jobs.length) {
-
-				jobsResults.sort(function(a , b){
-					return a.jobName.localeCompare(b.jobName);
-				});
-				response.render('index.html', {jobsWithStatuses: jobsResults, failuresWithCulprits: culprits});
-			}
+			jobsResults.sort(function(a , b){
+				return a.jobName.localeCompare(b.jobName);
+			});
+			isJobFinished = true;
+			if (isFlowFinished)
+					response.render('index.html' , {allFlowsResults : allFlowsResults , jobsWithStatuses: jobsResults, failuresWithCulprits: culprits} );
+		}
 	}
 }
 
@@ -140,7 +162,7 @@ function findCulpritsIfFailure(resultsStatus, dataFromJenkins) {
 }
 
 function displayResults(_a) {
-	results = "";
+	var results = "";
 	for (var i =0; i<_a.length; i++) {
 		results += JSON.stringify(_a[i]) + "\n";
 	}
@@ -151,25 +173,28 @@ function displayResults(_a) {
 
 function fetchConsoleOutputForJob(flowName, _callback) {
 	var results = "";
-		var options = {
-			host: 'jenkins.prezi.com',
-			path: ('/job/' + flowName + '/lastBuild/logText/progressiveText').replace(/\s/g,"%20"),
-			headers: {'Authorization': 'Basic ' + auth_key} 
-		}
-		https.get(options, function(res){
-			res.on("data", function(body) {
-				results += body.toString();
-			});
+	var options = {
+		host: 'jenkins.prezi.com',
+		path: ('/job/' + flowName + '/lastBuild/logText/progressiveText').replace(/\s/g,"%20"),
+		headers: {'Authorization': 'Basic ' + auth_key} 
+	};
 
-			res.on("end", function() {
-				_callback(flowName, results);
-			});
+	https.get(options, function(res){
 
-		}).on("error", function(e) {
-			console.log("error :" + e.message);
+		res.on("data", function(body) {
+			results += body.toString();
 		});
+
+		res.on("end", function() {
+			_callback(flowName, results);
+		});
+
+	}).on("error", function(e) {
+		console.log("error :" + e.message);
+	});
+
 }
-	
+
 function fetchOperationInJSON(jobName, operationName , _callback) {
 	var results = "";
 		var options = {
