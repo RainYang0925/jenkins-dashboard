@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head >
-	<meta http-equiv="refresh" content="20">
+	<meta http-equiv="refresh" content="10">
 	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
@@ -27,9 +27,6 @@
 				{% elif job.jobStatus == 'Building' %} yellow
 				{% elif job.jobStatus == 'Completed' %} green
 				{% else %} red {% endif %}"> <b> {{job.jobName}} </b>
-
-		<!--	<p style="border-style: solid;border-width: 1px;  background-color:
-				</p> -->
 			</div>
 		{% endfor %}
 	</div>
@@ -40,7 +37,7 @@
 <div class="masonry js-masonry"  data-masonry-options='{ "columnWidth": ".job", "itemSelector": ".job", "isFitWidth": true, "gutter": 10}'>
 	
 	{% for jobWithStatus in jobsWithStatuses %}
-	<div class="job" style="background-color: {% if jobWithStatus.flagIsBuilding == 'true' %} yellow {% elif jobWithStatus.buildResultStatus == 'SUCCESS' %} green {% elif jobWithStatus.buildResultStatus == 'FAILURE' %} red {% else %} gray {% endif %};">
+	<div class="job" style="background-color: {% if jobWithStatus.flagIsBuilding == true %} yellow {% elif jobWithStatus.buildResultStatus == 'SUCCESS' %} green {% elif jobWithStatus.buildResultStatus == 'FAILURE' %} red {% else %} gray {% endif %};">
 			{{jobWithStatus.jobName}}
 			<a href="{{jobWithStatus.linkOnJenkins}}" target = "_blank"> view on jenkins </a>
 	</div>

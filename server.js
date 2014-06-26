@@ -3,7 +3,6 @@ var express = require('express');
 var swig = require('swig');
 var path = require('path')
 var lineReader = require('line-reader');
-var async = require('async');
 
 
 var server = express();
@@ -24,7 +23,6 @@ function start(request , response){
 	var jobs = [];
 	var flowsList = [];
 	var allFlowsResults = [];
-
 	var allLastJobsNumbers = [];
 	var isFlowFinished = false;
 	var isJobFinished = false;
@@ -36,7 +34,6 @@ function start(request , response){
 			getLastFinishedBuildNumber(jobs[i] , fetchBuildInJSON ,  getJobStatus);
 		}
 	});
-
 	lineReader.eachLine('jenkins-flows', function(flowName) {
 		flowsList.push(flowName);
 	}).then(function() {
@@ -44,59 +41,47 @@ function start(request , response){
 			getLastFinishedBuildNumber(flowsList[i] , fetchConsoleOutputForJob ,   getAllBuildsStatuses);
 		}
 	});
-	var getAllBuildsStatuses = function(flowName , consoleResult){
-		
+	var getAllBuildsStatuses = function(flowName , consoleResult) {
 		var patterns = [ 
 			/\s*Schedule job (.+)/ , 
 			/\s*Build (.+) #([0-9]+) started/ ,
 			/\s*(.+) #([0-9]+) completed/ ,
 			/\s*(.+) #([0-9]+) completed\s*: FAILURE/
 		];
-
 		var jobsStatuses = [
 			'Scheduling',
 			'Building',
 			'Completed' ,
 			'Failed'
 		];
-
-
 		var resultLines = consoleResult.split('\n');
 		var flowResult = [];
 	
 		for (rl in resultLines) {
-
-		    for (i in patterns) {    
-
-		        var matches = patterns[i].exec(resultLines[rl]);
-		        if (matches == null || matches.length < 1) 
+		    for (pi in patterns) {    
+		        var matches = patterns[pi].exec(resultLines[rl]);
+		        if (matches == null || matches.length < 1) {
 		        	continue;
-
+		        }
 		   		var jobName = matches[1];
-		   		flowResult[jobName] = jobsStatuses[i];
-		        
+		   		flowResult[jobName] = jobsStatuses[pi];
 		    }
 		}
-
 		var flowResultArray = [];
-		for(var jobName in flowResult){
-
+		for (var jobName in flowResult) {
 			flowResultArray.push({
 		   		jobName: jobName,
 		   		jobStatus: flowResult[jobName]
 		   	});
 		}
-
-
 		allFlowsResults.push({
 			flowName: flowName,
 			jobsResults: flowResultArray
 		}); 
 
-	//	console.log('here3 -> ' + allFlowsResults.length);
-		if (allFlowsResults.length == flowsList.length){
+		if (allFlowsResults.length == flowsList.length) {
 			isFlowFinished = true;
-			allFlowsResults.sort(function(a , b){
+			allFlowsResults.sort(function(a , b) {
 				return a.flowName.localeCompare(b.flowName);
 			});
 			if (isJobFinished)
@@ -105,16 +90,13 @@ function start(request , response){
 	}
 
 	var getJobStatus = function(_jobName , _buildNumber ,  _res) {
-		dataReceived = _res;
-		
+		dataReceived = _res;		
 		var buildResultStatus = getValueFromJSON(dataReceived , 'result');
 		var flagIsBuilding = getValueFromJSON(dataReceived , 'building');
-
 		jobsResults.push( new JenkinsJobItem(_jobName , buildResultStatus , 'https://jenkins.prezi.com/job/' + _jobName + '/' + _buildNumber +'/'
 			 , flagIsBuilding ) );
-			
-		var culpritsForCurrentJob = findCulpritsIfFailure(buildResultStatus, dataReceived);
 
+		var culpritsForCurrentJob = findCulpritsIfFailure(buildResultStatus, dataReceived);
 		if (culpritsForCurrentJob != null && culpritsForCurrentJob.length > 0) {
 
 			culpritsForCurrentJob = culpritsForCurrentJob.filter(function (value, index, self) { 
@@ -123,7 +105,6 @@ function start(request , response){
 				
 			culprits.push([_jobName, culpritsForCurrentJob]);
 		}
-	//	console.log('here2 -> ' + jobsResults.length);
 		if (jobsResults.length == jobs.length) {
 
 			jobsResults.sort(function(a , b){
@@ -137,7 +118,7 @@ function start(request , response){
 }
 
 
-function JenkinsJobItem (jobName , buildResultStatus , linkOnJenkins , flagIsBuilding){
+function JenkinsJobItem (jobName , buildResultStatus , linkOnJenkins , flagIsBuilding) {
 	this.jobName = jobName;
 	this.buildResultStatus = buildResultStatus;
 	this.linkOnJenkins = linkOnJenkins;
@@ -148,9 +129,11 @@ function getValueFromJSON(data , key) {
 	try {
 		var jsonData = JSON.parse(data);
 	} catch (e) {
-		return 'NONE';
+		return undefined;
 	}
-	return jsonData[key] !== null ? jsonData[key].toString() : 'NONE';
+	if(jsonData.hasOwnProperty(key))
+		return jsonData[key] ; 
+	return undefined;
 }
 
 
@@ -173,12 +156,10 @@ function displayResults(_a) {
 	for (var i =0; i<_a.length; i++) {
 		results += JSON.stringify(_a[i]) + "\n";
 	}
-
 	return results;
 }
 
-function getLastFinishedBuildNumber(jobName , fetchResultCallBack , buildResultCallBack){
-
+function getLastFinishedBuildNumber(jobName , fetchResultCallBack , buildResultCallBack) {
 	var results = "";
 	var lastBuildNumber = '';
 	var options = {
@@ -194,18 +175,14 @@ function getLastFinishedBuildNumber(jobName , fetchResultCallBack , buildResultC
 
 		res.on("end", function() {
 			var buildNumber = getValueFromJSON(results , 'number');
-			var flagIsBuilding = getValueFromJSON(results , 'building')
-
-			if(buildNumber === 'NONE')
-				lastBuildNumber =  'NONE';
-			else if(flagIsBuilding == 'true') 
+			var flagIsBuilding = getValueFromJSON(results , 'building');
+			if (buildNumber === undefined )
+				lastBuildNumber =  undefined;
+			else if (flagIsBuilding === true) 
 				lastBuildNumber = (parseInt(buildNumber)-1).toString();
 			else
 				lastBuildNumber = parseInt(buildNumber).toString();
-
-		//	console.log("here1 : ", jobName + "  " , lastBuildNumber);
 			fetchResultCallBack(jobName , lastBuildNumber , buildResultCallBack);
-
 		});
 
 	}).on("error", function(e) {
@@ -245,6 +222,7 @@ function fetchBuildInJSON(jobName, buildNumber , _callback) {
 		headers: {'Authorization': 'Basic ' + auth_key} 
 	};
 	https.get(options, function(res){
+
 		res.on("data", function(body) {
 			results += body.toString();
 		});
