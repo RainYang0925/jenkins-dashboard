@@ -13,7 +13,12 @@ server.set('views', __dirname + '/templates');
 server.use(express.static(path.join(__dirname, 'static')));
 
 server.get("/", start);
+server.get("/loading.gif" , function(req , resp) {
 
+	resp.sendfile(path.resolve('templates/loading.gif'));
+
+
+});
 var auth_key = process.env.AUTH_KEY;
 
 function start(request , response){
@@ -89,12 +94,11 @@ function start(request , response){
 		}
 	}
 
-	var getJobStatus = function(_jobName , _buildNumber ,  _res) {
+	var getJobStatus = function(_jobName , isLastJobBuilding , _buildNumber ,  _res) {
 		dataReceived = _res;		
 		var buildResultStatus = getValueFromJSON(dataReceived , 'result');
-		var flagIsBuilding = getValueFromJSON(dataReceived , 'building');
 		jobsResults.push( new JenkinsJobItem(_jobName , buildResultStatus , 'https://jenkins.prezi.com/job/' + _jobName + '/' + _buildNumber +'/'
-			 , flagIsBuilding ) );
+			 , isLastJobBuilding ) );
 
 		var culpritsForCurrentJob = findCulpritsIfFailure(buildResultStatus, dataReceived);
 		if (culpritsForCurrentJob != null && culpritsForCurrentJob.length > 0) {
@@ -118,11 +122,11 @@ function start(request , response){
 }
 
 
-function JenkinsJobItem (jobName , buildResultStatus , linkOnJenkins , flagIsBuilding) {
+function JenkinsJobItem (jobName , buildResultStatus , linkOnJenkins , isLastJobBuilding) {
 	this.jobName = jobName;
 	this.buildResultStatus = buildResultStatus;
 	this.linkOnJenkins = linkOnJenkins;
-	this.flagIsBuilding = flagIsBuilding;
+	this.isLastJobBuilding = isLastJobBuilding;
 }
 
 function getValueFromJSON(data , key) {
@@ -182,7 +186,7 @@ function getLastFinishedBuildNumber(jobName , fetchResultCallBack , buildResultC
 				lastBuildNumber = (parseInt(buildNumber)-1).toString();
 			else
 				lastBuildNumber = parseInt(buildNumber).toString();
-			fetchResultCallBack(jobName , lastBuildNumber , buildResultCallBack);
+			fetchResultCallBack(jobName , flagIsBuilding , lastBuildNumber , buildResultCallBack);
 		});
 
 	}).on("error", function(e) {
@@ -190,7 +194,7 @@ function getLastFinishedBuildNumber(jobName , fetchResultCallBack , buildResultC
 	});
 }
 
-function fetchConsoleOutputForJob(flowName, buildNumber ,  _callback) {
+function fetchConsoleOutputForJob(flowName, isLastJobBuilding ,buildNumber ,  _callback) {
 	var results = "";
 	var options = {
 		host: 'jenkins.prezi.com',
@@ -205,7 +209,7 @@ function fetchConsoleOutputForJob(flowName, buildNumber ,  _callback) {
 		});
 
 		res.on("end", function() {
-			_callback(flowName, results);
+			_callback(flowName , results);
 		});
 
 	}).on("error", function(e) {
@@ -214,7 +218,7 @@ function fetchConsoleOutputForJob(flowName, buildNumber ,  _callback) {
 
 }
 
-function fetchBuildInJSON(jobName, buildNumber , _callback) {
+function fetchBuildInJSON(jobName, isLastJobBuilding , buildNumber , _callback) {
 	var results = "";
 	var options = {
 		host: 'jenkins.prezi.com',
@@ -228,7 +232,7 @@ function fetchBuildInJSON(jobName, buildNumber , _callback) {
 		});
 
 		res.on("end", function() {
-			_callback(jobName, buildNumber , results);
+			_callback(jobName, isLastJobBuilding , buildNumber , results);
 		});
 
 	}).on("error", function(e) {
