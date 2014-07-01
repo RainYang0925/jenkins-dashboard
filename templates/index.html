@@ -25,8 +25,7 @@
 				max-width: 100%; 
 				margin: 10px 20px 10px 10px;
 				background-color:
-				{% if job.jobStatus == 'Scheduling' %} gray 
-				{% elif job.jobStatus == 'Building' %} gray
+				{% if job.jobStatus == 'Scheduling' || job.jobStatus == 'Building'  %} gray
 				{% elif job.jobStatus == 'Unstable' %} yellow
 				{% elif job.jobStatus == 'Completed' %} green
 				{% else %} red {% endif %}"> <h4> {{job.jobName}} </h4>
@@ -51,16 +50,16 @@
 	{% endfor %}
 </div>
 
+	{% if failuresWithCulprits.length > 0 %}
 <div class='culprits'>
 	<h2>Culprits</h2>
-	{% if failuresWithCulprits.length > 0 %}
 	<ul>
 		{% for failure in failuresWithCulprits %}
 			<li>{{failure|join(': ')}}</li>
 		{% endfor %}
 	</ul>
-	{% endif %}
 </div>
+	{% endif %}
 
 
 
