@@ -16,7 +16,9 @@
 
 	{% for flowProject in allFlowsResults %}
 		<h4> {{ flowProject.flowName }} </h4>
-
+		{% if flowProject.isLastFlowBuilding %}
+			<img src="loading.gif" alt="Another Build is running .." width="100" height="100">
+		{% endif %}
 	<div class="masonry js-masonry"  data-masonry-options='{ "isFitWidth": true, "gutter": 10}'>
 		{% for job in flowProject.jobsResults %}
 			<div style="vertical-align: middle;text-align: center;width: 310px; height: 50px;box-shadow: 10px 10px 5px #888888;
@@ -24,7 +26,8 @@
 				margin: 10px 20px 10px 10px;
 				background-color:
 				{% if job.jobStatus == 'Scheduling' %} gray 
-				{% elif job.jobStatus == 'Building' %} yellow
+				{% elif job.jobStatus == 'Building' %} gray
+				{% elif job.jobStatus == 'Unstable' %} yellow
 				{% elif job.jobStatus == 'Completed' %} green
 				{% else %} red {% endif %}"> <h4> {{job.jobName}} </h4>
 			</div>

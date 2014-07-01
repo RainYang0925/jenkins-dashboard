@@ -46,18 +46,20 @@ function start(request , response){
 			getLastFinishedBuildNumber(flowsList[i] , fetchConsoleOutputForJob ,   getAllBuildsStatuses);
 		}
 	});
-	var getAllBuildsStatuses = function(flowName , consoleResult) {
+	var getAllBuildsStatuses = function(flowName , isLastFlowBuilding , consoleResult) {
 		var patterns = [ 
 			/\s*Schedule job (.+)/ , 
 			/\s*Build (.+) #([0-9]+) started/ ,
 			/\s*(.+) #([0-9]+) completed/ ,
-			/\s*(.+) #([0-9]+) completed\s*: FAILURE/
+			/\s*(.+) #([0-9]+) completed\s*: FAILURE/ ,
+			/\s*(.+) #([0-9]+) completed\s*: UNSTABLE/
 		];
 		var jobsStatuses = [
 			'Scheduling',
 			'Building',
 			'Completed' ,
-			'Failed'
+			'Failed' , 
+			'Unstable'
 		];
 		var resultLines = consoleResult.split('\n');
 		var flowResult = [];
@@ -81,7 +83,8 @@ function start(request , response){
 		}
 		allFlowsResults.push({
 			flowName: flowName,
-			jobsResults: flowResultArray
+			jobsResults: flowResultArray , 
+			isLastFlowBuilding: isLastFlowBuilding
 		}); 
 
 		if (allFlowsResults.length == flowsList.length) {
@@ -209,7 +212,7 @@ function fetchConsoleOutputForJob(flowName, isLastJobBuilding ,buildNumber ,  _c
 		});
 
 		res.on("end", function() {
-			_callback(flowName , results);
+			_callback(flowName, isLastJobBuilding , results);
 		});
 
 	}).on("error", function(e) {
