@@ -14,10 +14,7 @@ server.use(express.static(path.join(__dirname, 'static')));
 
 server.get("/", start);
 server.get("/loading.gif" , function(req , resp) {
-
 	resp.sendfile(path.resolve('templates/loading.gif'));
-
-
 });
 var auth_key = process.env.AUTH_KEY;
 
@@ -171,6 +168,7 @@ function getLastFinishedBuildNumber(jobName , fetchResultCallBack , buildResultC
 	var lastBuildNumber = '';
 	var options = {
 		host: 'jenkins.prezi.com',
+		secureProtocol: 'SSLv3_method',
 		path: ('/job/'+ jobName  + '/lastBuild/api/json').replace(/\s/g,"%20"),
 		headers: {'Authorization': 'Basic ' + auth_key} 
 	};
@@ -201,6 +199,7 @@ function fetchConsoleOutputForJob(flowName, isLastJobBuilding ,buildNumber ,  _c
 	var results = "";
 	var options = {
 		host: 'jenkins.prezi.com',
+		secureProtocol: 'SSLv3_method',
 		path: ('/job/' + flowName + '/' + buildNumber + '/logText/progressiveText').replace(/\s/g,"%20"),
 		headers: {'Authorization': 'Basic ' + auth_key} 
 	};
@@ -225,6 +224,7 @@ function fetchBuildInJSON(jobName, isLastJobBuilding , buildNumber , _callback) 
 	var results = "";
 	var options = {
 		host: 'jenkins.prezi.com',
+		secureProtocol: 'SSLv3_method',
 		path: ('/job/'+ jobName + '/' + buildNumber + '/api/json?pretty=1').replace(/\s/g,"%20"),
 		headers: {'Authorization': 'Basic ' + auth_key} 
 	};
