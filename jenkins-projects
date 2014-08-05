@@ -3,13 +3,13 @@ boxfish-client-player
 boxfish-client-player-i18n
 boxfish-client-player-i18n-update-pot
 boxfish-client-api
-boxfish-feature-switcher
+boxfish-featureswitcher
 boxfish-geometry
 boxfish-log-legacy
 boxfish-tools
-layout-js
+boxfish-text
 pdom-haxe
 boxfish-swf-render
 boxfish-video
-boxfish-bacon-js
+boxfish-bacon
 kite-igor
