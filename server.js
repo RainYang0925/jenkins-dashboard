@@ -28,7 +28,6 @@ function start(request , response){
 	var allLastJobsNumbers = [];
 	var isFlowFinished = false;
 	var isJobFinished = false;
-
 	lineReader.eachLine('jenkins-projects', function(jobName) {
 		jobs.push(jobName);
 	}).then(function() {
