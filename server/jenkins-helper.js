@@ -24,7 +24,7 @@ jh.setCredentials = function(data) { this.credentials = data; }
 jh.debug = false;
 jh.setDebug = function(v) { this.debug = v; }
 
-jh.get = function(path, cb) {
+jh.get = function(path) {
 	var def = Q.defer(),
 		results = '',
 		options = {
@@ -45,25 +45,23 @@ jh.get = function(path, cb) {
 		if (path === "/view/Boxfish-Koi/api/json") {
 			log("@@@@ VIEW fixture - finished", finished);
 			if (finished)
-				cb(JSON.stringify(fixtures['view-short']));
+				def.resolve(JSON.stringify(fixtures['view-short']));
 			else
-				cb(JSON.stringify(fixtures['building-view-short']));
-			return;
+				def.resolve(JSON.stringify(fixtures['building-view-short']));
 		}
 
 		if (path === "/job/igor-test/api/json") {
 			log('@@@@ igor job fixture - finished', finished);
 			if (finished)
-				cb(JSON.stringify(fixtures['igor-job']));
+				def.resolve(JSON.stringify(fixtures['igor-job']));
 			else
-				cb(JSON.stringify(fixtures['building-igor-job']));
-			return;
+				def.resolve(JSON.stringify(fixtures['building-igor-job']));
 		}
 
 		if (path === "/job/igor-test/1004/api/json") {
 			log('@@@@ igor build fixture - finished', finished);
 			if (finished) 
-				cb(JSON.stringify(fixtures['build']));
+				def.resolve(JSON.stringify(fixtures['build']));
 			else {
 				var build = fixtures['building-build'],
 					date = new Date();
@@ -72,23 +70,24 @@ jh.get = function(path, cb) {
 				build.timestamp = date.getTime()
 				build.estimatedDuration = 45000;
 
-				cb(JSON.stringify(build));
+				def.resolve(JSON.stringify(build));
 			}
-			return;
+
 		}
 
 		if (path === "/job/boxfish-koi-widgets/api/json") {
 			log('@@@@ widgets job fixture');
-			cb(JSON.stringify(fixtures['widgets-job']));
-			return;
+			def.resolve(JSON.stringify(fixtures['widgets-job']));
+
 		}
 
 		if (path === "/job/boxfish-koi-widgets/92/api/json") {
 			log('@@@@ widgets build fixture', finished);
-			cb(JSON.stringify(fixtures['widgets-build']));
-			return;
+			def.resolve(JSON.stringify(fixtures['widgets-build']));
+
 		}
 
+		return def.promise;
 	}
 
 
@@ -101,7 +100,8 @@ jh.get = function(path, cb) {
 				results += body.toString();
 			});
 			res.on("end", function() {
-				cb(results);
+				// cb(results);
+				def.resolve(results);
 			});
 		}
 	});
@@ -110,7 +110,10 @@ jh.get = function(path, cb) {
 
 	req.on("error", function(e) {
 		log("## Https.get error: " + e.message);
+		def.reject(e);
 	});
+
+	return def.promise;
 }
 
 
@@ -148,7 +151,7 @@ function cachedApi(pathConstructor, ttl, force) {
 		} else {
 
 			isRequesting[path] = true;
-			jh.get(path, function(data) {
+			jh.get(path).then(function(data) {
 
 				var res;
 				try {
@@ -162,6 +165,7 @@ function cachedApi(pathConstructor, ttl, force) {
 				ttlForPath[path] = ttl;
 				jh.cache.set(path, res, ttl);
 
+				def.resolve(res);
 				if (path in queuedPromisesForPath) {
 					log('!! Resolving '+ queuedPromisesForPath[path].length +' queued promises', path);
 					for (var l = queuedPromisesForPath[path].length; l--;) {
@@ -170,7 +174,16 @@ function cachedApi(pathConstructor, ttl, force) {
 					delete queuedPromisesForPath[path];
 				}
 
-				def.resolve(res);
+			}, function(error) {
+				isRequesting[path] = false;
+				def.reject(error);
+				if (path in queuedPromisesForPath) {
+					log('!! Rejecting '+ queuedPromisesForPath[path].length +' queued promises', path);
+					for (var l = queuedPromisesForPath[path].length; l--;) {
+						queuedPromisesForPath[path][l].reject(error);
+					}
+					delete queuedPromisesForPath[path];
+				}
 			});
 		}
 		return def.promise;
