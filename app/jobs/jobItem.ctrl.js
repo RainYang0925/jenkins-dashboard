@@ -62,7 +62,7 @@ angular.module('JenkinsDashboard')
 	}
 
 	$scope.getCompletionPercentage = function() {
-		if (!hasDetails) return;
+		if (!hasDetails()) return;
 		if (!$scope.isBuilding()) return;
 
 		// No est duration, first build or something?
@@ -78,7 +78,7 @@ angular.module('JenkinsDashboard')
 	function pad(n) { return ('0' + n).slice(-2); }
 
 	$scope.getTimeLeft = function() {
-		if (!hasDetails) return;
+		if (!hasDetails()) return;
 		if (!$scope.isBuilding()) return;
 
 		// No est duration, first build or something?

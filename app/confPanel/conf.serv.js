@@ -37,6 +37,5 @@ angular.module('JenkinsDashboard')
 		val: read()
 	};
 
-	console.log('ara che conf', conf);
 	return conf;
 });
