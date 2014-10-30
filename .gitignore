@@ -1,4 +1,7 @@
-node_modules/
-.DS_Store
+node_modules
+.DS_STORE
+assets/
+.tmp/
+build/
 
-start_app.sh
+auth.txt
