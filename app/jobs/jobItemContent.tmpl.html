@@ -1,0 +1,22 @@
+<div class="job-content">
+	<h3 class="name">
+		<span ng-if="isBuilding()" class="job-status time-left">
+			{{getTimeLeft()}}
+		</span>
+
+		<span 
+			ng-if="!isBuilding()" 
+			class="job-status label" 
+			ng-class="{'label-warning': isUnstable(), 'label-danger': isFailure()}">
+
+			<i ng-if="isSuccess()" class="glyphicon glyphicon-ok"></i>
+			<i ng-if="isFailure()" class="glyphicon glyphicon-thumbs-down"></i>
+			<i ng-if="isUnstable()" class="glyphicon glyphicon-eye-open"></i>
+		</span>
+
+		{{job.name}}
+	</h3>
+
+	<span>{{getCulprit()}}</span>
+	<span>{{lastBuild.changeSet.items[0].msg}}</span>
+</div>

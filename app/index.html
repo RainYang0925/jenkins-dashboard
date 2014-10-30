@@ -7,7 +7,7 @@
 		<!-- inject:app-style:css --><!-- endinject -->
 		<!-- inject:assets:css --><!-- endinject -->
 	</head>
-	<body>
+	<body ng-class="{'broken': somethingBroken}">
 
 		<socket-monitor></socket-monitor>
 		<screen-saver></screen-saver>
@@ -15,8 +15,8 @@
 		<div 
 			class="jobs-container" 
 			ng-mousemove="mouseHandler()"
-			ng-click="mouseHandler()"
-			ng-class="{'broken': somethingBroken}">
+			ng-click="mouseHandler()">
+			
 			<job-item 
 				ng-repeat="(jobName, job) in jobsArray" 
 				job="job" 

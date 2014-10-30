@@ -27,7 +27,7 @@ $blue: rgb(66, 139, 202);
 		box-shadow: 0px 0px 200px $red;
 	}
 	.message {
-		border-radius: 3px;
+		border-radius: 2px;
 		width: 600px;
 		text-align: center;
 	}
@@ -58,21 +58,14 @@ $blue: rgb(66, 139, 202);
 
 }
 
+
 .jobs-container {
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	bottom: 0px;
-	position: absolute;
 	padding: 2em;
+}
 
-	&.broken {
-		background-color: $red;
-	}
-	&.ok {
-		background-color: $green;
-	}
-
+body {
+	&.broken { background-color: $red; }
+	&.ok { background-color: $green; }
 }
 
 
@@ -81,7 +74,8 @@ $blue: rgb(66, 139, 202);
 
 	.job-content {
 		position: absolute;
-		line-height: 3em;
+		display: flex;
+		align-items: center;
 		height: 3em;
 		width: 100%;
 		background: transparent;
@@ -91,8 +85,7 @@ $blue: rgb(66, 139, 202);
 	.job-progress {
 		display: none;
 		overflow: hidden;
-		.job-progress-content {
-			position: absolute;
+		.job-content {
 			width: 2000px;
 		}
 	}
@@ -119,20 +112,26 @@ $blue: rgb(66, 139, 202);
 	}
 	.name {
 		display: inline;
+		margin: 0px;
 	}
 	.time-left {
 		font-size: 0.75em;
 	}
 
+	.job-status {
+		width: 3em;
+		display: inline-block;
+		border-radius: 2px;
+	}
+
 	&.bg-success i {
-		font-size: 0.75em;
 		color: $green;
 	}
 
 }
 
 .conf-button {
-	position: fixed;
+	position: absolute;
 	left: 28px;
 	top: 10px;
 	cursor: pointer;

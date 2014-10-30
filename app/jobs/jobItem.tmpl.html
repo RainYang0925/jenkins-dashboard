@@ -1,36 +1,6 @@
 <div class="job-item {{getJobClassName()}}">
 
-	<div class="job-content">
-		<h3 class="name">
-			<span ng-if="isBuilding()" class="time-left">
-				{{getTimeLeft()}}
-			</span>
-			<span ng-if="isSuccess()"><i class="glyphicon glyphicon-ok"></i></span>
-			<span ng-if="isFailure()" class="label label-danger"><i class="glyphicon glyphicon-thumbs-down"></i></span>
-			<span ng-if="isUnstable()" class="label label-warning"><i class="glyphicon glyphicon-eye-open"></i></span>
-			{{job.name}}
-		</h3>
-
-		<span>{{getCulprit()}}</span>
-		<span>{{lastBuild.changeSet.items[0].msg}}</span>
-	</div>
-
-	<div class="job-progress" style="width: {{getCompletionPercentage()}}%">
-		<div class="job-progress-content">
-			<h3 class="name">
-				<span ng-if="isBuilding()" class="time-left">
-					{{getTimeLeft()}}
-				</span>
-				<span ng-if="isSuccess()" class="label label-success"><i class="glyphicon glyphicon-ok"></i></span>
-				<span ng-if="isFailure()" class="label label-warning"><i class="glyphicon glyphicon-thumbs-down"></i></span>
-				<span ng-if="isUnstable()" class="label label-danger"><i class="glyphicon glyphicon-eye-open"></i></span>
-				{{job.name}}
-			</h3>
-
-			<span>{{getCulprit()}}</span>
-			<span>{{lastBuild.changeSet.items[0].msg}}</span>
-		</div>
-	</div>
-
+	<div ng-include="'jobs/jobItemContent.tmpl.html'"></div>
+	<div class="job-progress" style="width: {{getCompletionPercentage()}}%" ng-include="'jobs/jobItemContent.tmpl.html'"></div>
 
 </div>
