@@ -1,0 +1,31 @@
+<!doctype html>
+<html ng-app="JenkinsDashboard" ng-controller="IndexCtrl">
+	<head>
+		<meta charset="utf-8">
+		<meta name="language" content="english">
+		<title ng-bind="pageTitle"></title>
+		<!-- inject:app-style:css --><!-- endinject -->
+		<!-- inject:assets:css --><!-- endinject -->
+	</head>
+	<body>
+
+		<socket-monitor></socket-monitor>
+		<screen-saver></screen-saver>
+
+		<div 
+			class="jobs-container" 
+			ng-mousemove="mouseHandler()"
+			ng-click="mouseHandler()"
+			ng-class="{'broken': somethingBroken}">
+			<job-item 
+				ng-repeat="(jobName, job) in jobsArray" 
+				job="job" 
+				details="details[job.name]"
+				last-build="lastBuild[job.name]"></job-item>
+		</div>
+
+		<!-- inject:assets:js --><!-- endinject -->
+		<!-- inject:app:js --><!-- endinject -->
+
+	</body>
+</html>

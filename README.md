@@ -1,9 +1,9 @@
 The NEW Jenkins Dashboard
 =========================
 
-## Installation 
+## Install it 
 
-You will need some node/npm (brew, http://nodejs.org/, whatever) stuff installed:
+You will need some node/npm (brew, http://nodejs.org/, whatever) stuff installed. Then run:
 * `npm install -g gulp`
 * `npm install`
 

@@ -1,0 +1,1 @@
+angular.module("JenkinsDashboard", ['mgcrea.ngStrap']);

@@ -1,0 +1,171 @@
+$green: rgb(92, 184, 92);
+$red: rgb(217, 83, 79);
+$orange: rgb(240, 173, 78);
+$blue: rgb(66, 139, 202);
+
+.fixed {
+	position: fixed;
+	top: 5px;
+	left: 5px;
+	bottom: 5px;
+	right: 5px;
+}
+
+.socket-monitor {
+	background: rgba(0,0,0, 0.75);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 999;
+
+	&.connected .message {
+		color: $green;
+		box-shadow: 0px 0px 200px $green;
+	}
+	&.reconnecting .message {
+		color: $red;
+		box-shadow: 0px 0px 200px $red;
+	}
+	.message {
+		border-radius: 3px;
+		width: 600px;
+		text-align: center;
+	}
+
+	transition: opacity 0.3s ease-in;
+	&.away {
+		pointer-events: none;
+		opacity: 0;
+	}
+}
+
+.screen-saver {
+	z-index: 998;
+	background: rgba(0,0,0, 0.75);
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	img {
+		width: 100%; 
+		cursor: none;
+	}
+	transition: opacity 0.2s ease-in;
+	&.away {
+		pointer-events: none;
+		opacity: 0;
+	}
+
+}
+
+.jobs-container {
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	position: absolute;
+	padding: 2em;
+
+	&.broken {
+		background-color: $red;
+	}
+	&.ok {
+		background-color: $green;
+	}
+
+}
+
+
+.job-item {
+	position: relative;
+
+	.job-content {
+		position: absolute;
+		line-height: 3em;
+		height: 3em;
+		width: 100%;
+		background: transparent;
+		overflow: hidden;
+	}
+
+	.job-progress {
+		display: none;
+		overflow: hidden;
+		.job-progress-content {
+			position: absolute;
+			width: 2000px;
+		}
+	}
+
+	&.job-building .job-progress {
+		display: block;
+		width: 0%;
+		position: absolute; 
+		line-height: 3em;
+		height: 3em;
+		background: rgb(66, 139, 202);
+		box-shadow: inset 0 1px 5px rgba(0, 0, 0, .3);
+		margin-bottom: 1px;
+		color: white;
+		transition: width 1.5s linear;
+	}
+
+	margin-bottom: 1px;
+	line-height: 3em;
+	height: 3em;
+
+	span {
+		margin: 6px;
+	}
+	.name {
+		display: inline;
+	}
+	.time-left {
+		font-size: 0.75em;
+	}
+
+	&.bg-success i {
+		font-size: 0.75em;
+		color: $green;
+	}
+
+}
+
+.conf-button {
+	position: fixed;
+	left: 28px;
+	top: 10px;
+	cursor: pointer;
+	opacity: 0.7;
+	&:hover {
+		opacity: 1;
+	}
+}
+
+.modal-backdrop.am-fade {
+  opacity: .5;
+  transition: opacity .15s linear;
+  &.ng-enter {
+    opacity: 0;
+    &.ng-enter-active {
+      opacity: .5;
+    }
+  }
+  &.ng-leave {
+    opacity: .5;
+    &.ng-leave-active {
+      opacity: 0;
+    }
+  }
+}
+
+.modal.center .modal-dialog {
+	position: fixed;
+	top: 40%;
+	left: 50%;
+	min-width: 320px;
+	max-width: 630px;
+	width: 50%;
+	-webkit-transform: translateX(-50%) translateY(-50%);
+	transform: translateX(-50%) translateY(-50%)
+}
