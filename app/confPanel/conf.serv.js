@@ -1,13 +1,13 @@
 angular.module('JenkinsDashboard')
 .service('Conf', function($rootScope, $compile, $modal) {
 
-	angular.element(document.querySelector('body')).append("<conf-panel></conf-panel>");
-	$compile(document.querySelector('conf-panel'))($rootScope);
+	angular.element(document.querySelector('body')).append("<conf-button></conf-button>");
+	$compile(document.querySelector('conf-button'))($rootScope);
 	$rootScope.$$phase || $rootScope.$digest();
 
 	var defaults = {
 		address: "localhost:4001",
-		timeout: 60,
+		timeout: 2,
 		rotation: 60*20,
 		useScreenSaver: true
 	};

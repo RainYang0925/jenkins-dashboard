@@ -1,5 +1,5 @@
 angular.module('JenkinsDashboard')
-.controller('confPanelCtrl', function($rootScope, $scope, $modal, ScreenSaver, Conf) {
+.controller('confButtonCtrl', function($rootScope, $scope, $modal, ScreenSaver, Conf) {
 
 	var modal = $modal({ 
 		scope: $scope, 
