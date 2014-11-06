@@ -16,6 +16,8 @@ jh.log = log = function() {
 
 module.exports = jh;
 
+// If a jenkins request does not 
+var FORCE_REFRESH_MS = 2 * 60 * 1000;
 var DEFAULT_TTL = 120;
 jh.cache = new NodeCache({ stdTTL: DEFAULT_TTL });
 
@@ -36,7 +38,7 @@ jh.get = function(path) {
 
 
 	// Use the fixtures? No jenkins requests at all.
-	if (!false) {
+	if (false) {
 
 		// Finished = true -> no building job, 
 		// seconds > 30 -> every 30s it switches from building to finished
@@ -100,9 +102,11 @@ jh.get = function(path) {
 				results += body.toString();
 			});
 			res.on("end", function() {
-				// cb(results);
 				def.resolve(results);
 			});
+		} else {
+			log("@@@ Jenkins replied with status code: "+ res.statusCode);
+			def.reject(e);
 		}
 	});
 
@@ -119,14 +123,16 @@ jh.get = function(path) {
 
 var ttlForPath = {},
 	isRequesting = {},
-	queuedPromisesForPath = {};
+	queuedPromisesForPath = {},
+	firstQueuedPromiseForPath = {};
 
 function cachedApi(pathConstructor, ttl, force) {
 
 	return function() {
 		var def = Q.defer(),
 			path = pathConstructor,
-			cached;
+			cached,
+			timeNow = (new Date()).getTime();
 
 		if (typeof(pathConstructor) === "function") {
 			path = pathConstructor.apply(this, arguments);
@@ -139,6 +145,16 @@ function cachedApi(pathConstructor, ttl, force) {
 			cached = jh.cache.get(path);
 		}
 
+		// If we are waiting for this call for more than FORCE_REFRESH_MS, just do the call again
+		if (isRequesting[path] && timeNow - firstQueuedPromiseForPath[path] > FORCE_REFRESH_MS) {
+			log('!!!!!! Resetting ' + path, timeNow - firstQueuedPromiseForPath[path]);
+
+			isRequesting[path] = false;
+			delete queuedPromisesForPath[path];
+			delete firstQueuedPromiseForPath[path];
+		}
+
+
 		if ((path in cached)) {
 			def.resolve(cached[path]);
 		} else if (isRequesting[path]) {
@@ -146,12 +162,15 @@ function cachedApi(pathConstructor, ttl, force) {
 				queuedPromisesForPath[path].push(def);
 			} else {
 				queuedPromisesForPath[path] = [def];
+				firstQueuedPromiseForPath[path] = timeNow;
 			}
-			log('!! Queued '+ queuedPromisesForPath[path].length, path);
+			log('!! Queued '+ queuedPromisesForPath[path].length, path, timeNow - firstQueuedPromiseForPath[path]);
+
 		} else {
 
 			isRequesting[path] = true;
 			jh.get(path).then(function(data) {
+				isRequesting[path] = false;
 
 				var res;
 				try {
@@ -161,7 +180,6 @@ function cachedApi(pathConstructor, ttl, force) {
 					log('########### ERROR: Json too big?!?!? ', path, data.length, e);
 				}
 
-				isRequesting[path] = false;
 				ttlForPath[path] = ttl;
 				jh.cache.set(path, res, ttl);
 
@@ -172,6 +190,7 @@ function cachedApi(pathConstructor, ttl, force) {
 						queuedPromisesForPath[path][l].resolve(res);
 					}
 					delete queuedPromisesForPath[path];
+					delete firstQueuedPromiseForPath[path];
 				}
 
 			}, function(error) {
@@ -183,6 +202,7 @@ function cachedApi(pathConstructor, ttl, force) {
 						queuedPromisesForPath[path][l].reject(error);
 					}
 					delete queuedPromisesForPath[path];
+					delete firstQueuedPromiseForPath[path];
 				}
 			});
 		}
