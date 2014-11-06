@@ -2,8 +2,9 @@ angular.module("JenkinsDashboard")
 .filter("filterByConfiguration", function(Conf) {
 	return function(jobs, lastBuild) {
 		var filtered = [];
-		var filterString = Conf.val.filter;
-		console.log("lastBuild", lastBuild);
+		var filterString = Conf.val.filter.toLowerCase();
+
+		console.log('Filtering');
 		angular.forEach(jobs, function(job) {
 			if (job.name.match(filterString) !== null) {
 					filtered.push(job);
@@ -11,9 +12,8 @@ angular.module("JenkinsDashboard")
 			}
 
 			var lastBuildJob = lastBuild[job.name];
-			console.log(lastBuildJob.culprits);
 			if (lastBuildJob.culprits && lastBuildJob.culprits.length > 0 && lastBuildJob.culprits[0] && lastBuildJob.culprits[0].fullName) {
-				if (lastBuildJob.culprits[0].fullName.match(filterString) !== null) {
+				if (lastBuildJob.culprits[0].fullName.toLowerCase().match(filterString) !== null) {
 					filtered.push(job); 
 					return;
 				}

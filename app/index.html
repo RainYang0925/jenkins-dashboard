@@ -15,11 +15,7 @@
 
 		<h1 class="dashboard-title">{{conf.viewName}}</h1>
 
-		<div 
-			class="jobs-container" 
-			ng-mousemove="mouseHandler()"
-			ng-click="mouseHandler()">
-			
+		<div class="jobs-container">
 			<job-item 
 				ng-repeat="job in jobsArray | filterByConfiguration:lastBuild | orderBy:orderByConfiguration" 
 				job="job" 

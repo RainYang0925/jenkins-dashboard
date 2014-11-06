@@ -19,10 +19,6 @@ angular.module("JenkinsDashboard")
 	$scope.lastBuild = {};
 	$scope.conf = Conf.val;
 
-	$scope.mouseHandler = function() {
-		ScreenSaver.hide();
-	}
-
 	var updateViewInterval;
 	Socket.on("connect", function() {
 		clearJobsTimeouts();

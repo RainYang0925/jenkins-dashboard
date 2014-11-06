@@ -22,6 +22,8 @@ angular.module('JenkinsDashboard')
 	}
 
 	function hide() {
+		if (!isShown) return;
+
 		$timeout.cancel(screenSaverTimeout);
 		$timeout.cancel(screenSaverChangeTimeout)
 
