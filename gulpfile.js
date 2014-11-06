@@ -37,18 +37,19 @@ gulp.task('live reload', function() {
 
 gulp.task('clean', function() {
 	return gulp
-		.src([expressRoot + '/app/'], { read: false })
+		.src([expressRoot], { read: false })
 		.pipe(plugins.rimraf({ force: true }))
 		.on('error', plugins.util.log);
 });
 
 gulp.task('js app', ['templates'], function() {
 	return gulp
-		.src(['app/app.js', 'app/**/*.js', expressRoot + '/app/templates.js'])
+		.src(['app/app.js', 'app/**/*.js', expressRoot + '/tmp.debug/templates.js'])
 		.pipe(plugins.plumber())
 		.pipe(plugins.concat('app.js'))
+		.pipe(gulp.dest(expressRoot + '/tmp.debug/'))
 		.pipe(plugins.ngAnnotate())
-		// .pipe(plugins.uglify())
+		.pipe(plugins.uglify())
 		.pipe(gulp.dest(expressRoot + '/app'))
 		.on('end', notifyLiveReload)
 		.on('error', plugins.util.log);
@@ -78,7 +79,7 @@ gulp.task('templates', function() {
 		.pipe(plugins.angularTemplatecache({
 			module: 'JenkinsDashboard'
 		}))
-		.pipe(gulp.dest(expressRoot + '/app'))
+		.pipe(gulp.dest(expressRoot + '/tmp.debug'))
 		.on('end', notifyLiveReload)
 		.on('error', plugins.util.log);
 });
@@ -155,7 +156,7 @@ gulp.task('build', function() {
 });
 
 // TODO: Not quite sure the tasks get execute properly, race conditions? Use https://www.npmjs.org/package/gulp-run-sequence ?
-gulp.task('default', ['clean', 'express server', 'live reload', 'copy libs', 'js app', 'styles', 'index', 'server start'], function () {
+gulp.task('default', ['express server', 'live reload', 'copy libs', 'js app', 'styles', 'index', 'server start'], function () {
 	gulp.watch(['app/styles/**/*', '!app/styles/fonts/**/*'], ['styles']);
 	gulp.watch('app/index.html', ['index']);
 	gulp.watch(['app/**/*tmpl.html', 'app/*js', 'app/**/*js'], ['js app']);

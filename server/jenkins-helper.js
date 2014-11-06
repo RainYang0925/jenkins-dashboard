@@ -107,7 +107,7 @@ jh.get = function(path) {
 			});
 		} else {
 			log("@@@ Jenkins replied with status code: "+ res.statusCode);
-			def.reject(e);
+			def.reject();
 		}
 	});
 
