@@ -13,7 +13,7 @@ angular.module('JenkinsDashboard')
 		topic: "dog loop",
 		order: "name",
 		viewName: "Boxfish-Koi",
-		filter: ""
+		filter: "",
 		useSpeechSynthesis: true,
 		isSpeechSynthesisSupported: false
 	};
