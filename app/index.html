@@ -11,6 +11,7 @@
 
 		<socket-monitor></socket-monitor>
 		<screen-saver></screen-saver>
+		<job-filter></job-filter>
 
 		<div 
 			class="jobs-container" 
@@ -18,7 +19,7 @@
 			ng-click="mouseHandler()">
 			
 			<job-item 
-				ng-repeat="job in jobsArray | orderBy:orderByConfiguration" 
+				ng-repeat="job in jobsArray | filterByConfiguration:lastBuild | orderBy:orderByConfiguration" 
 				job="job" 
 				details="details[job.name]"
 				last-build="lastBuild[job.name]"></job-item>

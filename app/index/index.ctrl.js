@@ -89,7 +89,6 @@ angular.module("JenkinsDashboard")
 			case "broken": return orderByBrokenFirst(job);
 			default : return job.name;
 		}
-		Conf.val.order 
 		return orderByBrokenFirst(job);
 	}
 
@@ -112,6 +111,7 @@ angular.module("JenkinsDashboard")
 			return 2 + job.name;
 		}
 	};
+
 
 	$scope.somethingBroken = false;
 	Socket.on("j update-view", function(res) {

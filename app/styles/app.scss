@@ -61,6 +61,7 @@ $blue: rgb(66, 139, 202);
 
 .jobs-container {
 	padding: 2em;
+	padding-top: 3em;
 }
 
 body {
@@ -168,3 +169,19 @@ body {
 	-webkit-transform: translateX(-50%) translateY(-50%);
 	transform: translateX(-50%) translateY(-50%)
 }
+
+.job-filter {
+	position: absolute;
+	left: 58px;
+	top: 10px;
+	width: 200px;
+}
+
+.job-filter-button {
+	cursor: pointer;
+	opacity: 0.7;
+	&:hover {
+		opacity: 1;
+	}
+}
+

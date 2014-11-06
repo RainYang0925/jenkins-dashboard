@@ -12,7 +12,8 @@ angular.module('JenkinsDashboard')
 		useScreenSaver: true,
 		topic: "dog loop",
 		order: "name",
-		viewName: "Boxfish-Koi"
+		viewName: "Boxfish-Koi",
+		filter: ""
 	};
 
 	function setLocationFromConf() {
