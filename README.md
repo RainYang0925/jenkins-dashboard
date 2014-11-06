@@ -5,7 +5,10 @@ The NEW Jenkins Dashboard
 
 You will need some node/npm (brew, http://nodejs.org/, whatever) stuff installed. Then run:
 * `npm install -g gulp`
+* `npm install -g bower`
 * `npm install`
+
+Create a file named `auth.txt` in the root folder of the project with username and password to query jenkins, in the format `username:s0m3p4ssw0rd`.
 
 
 ## Run it
