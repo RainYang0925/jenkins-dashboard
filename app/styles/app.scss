@@ -61,12 +61,22 @@ $blue: rgb(66, 139, 202);
 
 .jobs-container {
 	padding: 2em;
-	padding-top: 3em;
+	padding-top: 4em;
 }
 
 body {
 	&.broken { background-color: $red; }
 	&.ok { background-color: $green; }
+}
+
+h1.dashboard-title {
+	position: absolute;
+	right: 0px;
+	margin: 0px;
+	margin-right: 2em;
+	font-size: 53px;
+	font-weight: 900;
+	text-shadow: 1px 1px 10px #ccc;
 }
 
 

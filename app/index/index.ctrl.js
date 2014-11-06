@@ -17,6 +17,7 @@ angular.module("JenkinsDashboard")
 	$scope.jobs = {};
 	$scope.details = {};
 	$scope.lastBuild = {};
+	$scope.conf = Conf.val;
 
 	$scope.mouseHandler = function() {
 		ScreenSaver.hide();

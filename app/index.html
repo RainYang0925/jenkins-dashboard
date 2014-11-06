@@ -7,11 +7,13 @@
 		<!-- inject:app-style:css --><!-- endinject -->
 		<!-- inject:assets:css --><!-- endinject -->
 	</head>
-	<body ng-class="{'broken': somethingBroken}">
+	<body ng-class="{ 'broken': somethingBroken, 'ok': !somethingBroken }">
 
 		<socket-monitor></socket-monitor>
 		<screen-saver></screen-saver>
 		<job-filter></job-filter>
+
+		<h1 class="dashboard-title">{{conf.viewName}}</h1>
 
 		<div 
 			class="jobs-container" 
