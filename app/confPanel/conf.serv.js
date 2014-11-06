@@ -10,7 +10,8 @@ angular.module('JenkinsDashboard')
 		timeout: 2,
 		rotation: 20,
 		useScreenSaver: true,
-		topic: "dog loop"
+		topic: "dog loop",
+		order: "name"
 	};
 
 	function save() {

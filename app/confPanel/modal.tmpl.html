@@ -10,6 +10,15 @@
 			<div class="modal-body">
 				<form role="form" name="form">
 
+					<div class="select-order">
+						<label>Order of jobs</label>
+						<form>
+							<br><input type="radio" ng-model="conf.order" value="name"> Job name</input>
+							<br><input type="radio" ng-model="conf.order" value="broken"> Broken jobs first</input>
+							<br><input type="radio" ng-model="conf.order" value="running"> Running jobs first</input>
+						</form>
+					</div>
+
 					<div class="form-group">
 						<label>Server address</label>
 

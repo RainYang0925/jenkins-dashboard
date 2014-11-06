@@ -18,7 +18,7 @@
 			ng-click="mouseHandler()">
 			
 			<job-item 
-				ng-repeat="(jobName, job) in jobsArray" 
+				ng-repeat="job in jobsArray | orderBy:orderByConfiguration" 
 				job="job" 
 				details="details[job.name]"
 				last-build="lastBuild[job.name]"></job-item>

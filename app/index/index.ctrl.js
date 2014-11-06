@@ -83,6 +83,36 @@ angular.module("JenkinsDashboard")
 		}
 	}
 
+	$scope.orderByConfiguration = function(job) {
+		switch (Conf.val.order) {
+			case "running" : return orderByRunningFirst(job);
+			case "broken": return orderByBrokenFirst(job);
+			default : return job.name;
+		}
+		Conf.val.order 
+		return orderByBrokenFirst(job);
+	}
+
+	function orderByBrokenFirst(job) {
+		if (job.color === "red") {
+			return 0;
+		} else if (job.color.match(/_anime/) !== null) {
+			return 1;
+		} else {
+			return 3;
+		}
+	};
+
+	$scope.orderByRunningFirst = function(job) {
+		if (job.color.match(/_anime/) !== null) {
+			return 0;
+		} else if (job.color === "red") {
+			return 1;
+		} else {
+			return 2;
+		}
+	};
+
 	$scope.somethingBroken = false;
 	Socket.on("j update-view", function(res) {
 		clearJobsTimeouts();
