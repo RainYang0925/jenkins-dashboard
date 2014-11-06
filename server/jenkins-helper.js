@@ -16,8 +16,9 @@ jh.log = log = function() {
 
 module.exports = jh;
 
-// If a jenkins request does not 
+// If a jenkins request does not reply under this time (and we are queueing them up), force a refresh
 var FORCE_REFRESH_MS = 2 * 60 * 1000;
+
 var DEFAULT_TTL = 120;
 jh.cache = new NodeCache({ stdTTL: DEFAULT_TTL });
 

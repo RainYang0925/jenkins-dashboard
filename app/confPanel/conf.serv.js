@@ -1,5 +1,5 @@
 angular.module('JenkinsDashboard')
-.service('Conf', function($rootScope, $compile, $modal) {
+.service('Conf', function($rootScope, $compile, $modal, $route, $routeParams, $location) {
 
 	angular.element(document.querySelector('body')).append("<conf-button></conf-button>");
 	$compile(document.querySelector('conf-button'))($rootScope);
@@ -11,11 +11,21 @@ angular.module('JenkinsDashboard')
 		rotation: 20,
 		useScreenSaver: true,
 		topic: "dog loop",
-		order: "name"
+		order: "name",
+		viewName: "Boxfish-Koi"
 	};
+
+	function setLocationFromConf() {
+		var path = "/" + conf.val.viewName;
+		if (conf.val.order !== defaults.order) {
+			path += "/" + conf.val.order;
+		}
+		$location.path(path);
+	}
 
 	function save() {
 		localStorage['jenkinsDashboardConf'] = JSON.stringify(conf.val);
+		setLocationFromConf();
 	}
 
 	function read() {
@@ -24,7 +34,10 @@ angular.module('JenkinsDashboard')
 			localStorage['jenkinsDashboardConf'] = defaultsJSON;
 			return defaults;
 		}
-		return JSON.parse(localStorage['jenkinsDashboardConf']);
+		var parsed = JSON.parse(localStorage['jenkinsDashboardConf']),
+			ret = angular.copy(defaults);
+
+		return angular.extend(ret, parsed);
 	}
 
 	var conf = {
@@ -32,6 +45,8 @@ angular.module('JenkinsDashboard')
 		save: save,
 		val: read()
 	};
+
+	setLocationFromConf();
 
 	return conf;
 });
