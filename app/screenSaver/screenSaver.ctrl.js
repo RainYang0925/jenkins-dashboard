@@ -17,7 +17,9 @@ angular.module('JenkinsDashboard')
 	});
 
 	ScreenSaver.onChangeImage(function() {
-		$scope.src = ScreenSaver.getImg();
+		$scope.$evalAsync(function() {
+			$scope.src = ScreenSaver.getImg();
+		});
 	});
 
 });

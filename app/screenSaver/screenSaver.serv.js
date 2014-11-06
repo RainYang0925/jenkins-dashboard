@@ -1,16 +1,9 @@
 angular.module('JenkinsDashboard')
-.service('ScreenSaver', function($timeout, $rootScope, Conf) {
+.service('ScreenSaver', function($timeout, $rootScope, $resource, Conf) {
 
-	var SCREEN_SAVER_MS = parseInt(Conf.timeout, 10) * 60 * 1000,
-		SCREEN_SAVER_CHANGE = 10 * 60 * 1000;
-
-	var fixtures = [
-		'/styles/fixture1.gif',
-		'/styles/fixture2.gif',
-		'/styles/fixture3.gif',
-		'/styles/fixture4.gif',
-		'/styles/fixture5.gif'
-	];
+	// TODO: this is the 'beta' key, request a proper one when ready to go live!
+	var GIPHY_API_KEY = "dc6zaTOxFJmzC",
+		randomGIF = $resource('http://api.giphy.com/v1/gifs/random', { api_key: GIPHY_API_KEY });
 
 	var isShown = false,
 		hideCbs = [],
@@ -21,7 +14,6 @@ angular.module('JenkinsDashboard')
 		currentScreenSaver;
 
 	function show() {
-		changeScreenSaver();
 		isShown = true;
 		for (var l = showCbs.length; l--;)
 			showCbs[l].call();
@@ -47,19 +39,22 @@ angular.module('JenkinsDashboard')
 	}
 
 	function changeScreenSaver() {
-		currentScreenSaver = fixtures[Math.floor(Math.random() * fixtures.length)];
-
 		var rotation = parseFloat(Conf.val.rotation);
 		if (rotation === 0) {
 			$timeout.cancel(screenSaverChangeTimeout)
 			screenSaverChangeTimeout = null;
-			return
+			return;
 		}
 
-		screenSaverChangeTimeout = $timeout(changeScreenSaver, (rotation || Conf.defaults.rotation) * 60 * 1000);
+		randomGIF.get({ tag: "dog loop" }, function(res) {
+			currentScreenSaver = res.data.image_url;
+			for (var l = changeImageCbs.length; l--;) {
+				changeImageCbs[l].call();
+			}
+			console.log("New screensaver: ", currentScreenSaver);
+		});
 
-		for (var l = changeImageCbs.length; l--;)
-			changeImageCbs[l].call();
+		screenSaverChangeTimeout = $timeout(changeScreenSaver, (rotation || Conf.defaults.rotation) * 60 * 1000);
 	}
 	changeScreenSaver();
 

@@ -1,1 +1,1 @@
-angular.module("JenkinsDashboard", ['mgcrea.ngStrap']);
+angular.module("JenkinsDashboard", ['mgcrea.ngStrap', 'ngResource']);
