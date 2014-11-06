@@ -43,7 +43,7 @@ jh.get = function(path) {
 
 		// Finished = true -> no building job, 
 		// seconds > 30 -> every 30s it switches from building to finished
-		var finished = true; // (new Date()).getSeconds() > 30;
+		var finished = (new Date()).getSeconds() > 30;
 
 		if (path === "/view/Boxfish-Koi/api/json") {
 			log("@@@@ VIEW fixture - finished", finished);
