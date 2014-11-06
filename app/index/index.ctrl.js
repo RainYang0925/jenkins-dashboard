@@ -103,7 +103,7 @@ angular.module("JenkinsDashboard")
 		}
 	};
 
-	$scope.orderByRunningFirst = function(job) {
+	function orderByRunningFirst(job) {
 		if (job.color.match(/_anime/) !== null) {
 			return 0;
 		} else if (job.color === "red") {
