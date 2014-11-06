@@ -14,7 +14,13 @@ angular.module('JenkinsDashboard')
 		order: "name",
 		viewName: "Boxfish-Koi",
 		filter: ""
+		useSpeechSynthesis: true,
+		isSpeechSynthesisSupported: false
 	};
+
+	function isSpeechSynthesisSupported() { 
+		return ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window); 
+	}
 
 	function setLocationFromConf() {
 		var path = "/" + conf.val.viewName;
@@ -30,15 +36,22 @@ angular.module('JenkinsDashboard')
 	}
 
 	function read() {
+		var ret = angular.copy(defaults);
+
 		if (typeof(localStorage['jenkinsDashboardConf']) === "undefined") {
 			var defaultsJSON = JSON.stringify(defaults);
 			localStorage['jenkinsDashboardConf'] = defaultsJSON;
-			return defaults;
+		} else {
+			angular.extend(ret, JSON.parse(localStorage['jenkinsDashboardConf']));
 		}
-		var parsed = JSON.parse(localStorage['jenkinsDashboardConf']),
-			ret = angular.copy(defaults);
 
-		return angular.extend(ret, parsed);
+		if (isSpeechSynthesisSupported()) {
+			ret.isSpeechSynthesisSupported = true;
+		} else {
+			ret.isSpeechSynthesisSupported = false;
+		}
+
+		return ret;
 	}
 
 	var conf = {
@@ -47,7 +60,6 @@ angular.module('JenkinsDashboard')
 		val: read()
 	};
 
-	setLocationFromConf();
-
+	save();
 	return conf;
 });

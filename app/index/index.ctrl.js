@@ -1,5 +1,5 @@
 angular.module("JenkinsDashboard")
-.controller("IndexCtrl", function($scope, $interval, $timeout, Socket, ScreenSaver, Conf) {
+.controller("IndexCtrl", function($scope, $interval, $timeout, Socket, ScreenSaver, Conf, Voice) {
 
 	var $ts = function() {
 		var pad = function(n) { return ('0' + n).slice(-2); },
@@ -132,7 +132,7 @@ angular.module("JenkinsDashboard")
 				requestUpdateJob(job.name);
 			}
 
-			if (job.color.match(/red/) !== null || job.color.match(/yellow/) !== null) {
+			if (isBroken(job.color)) {
 				ScreenSaver.hide();
 				$scope.somethingBroken = true;
 			}
@@ -169,7 +169,10 @@ angular.module("JenkinsDashboard")
 				console.log($ts(),'#### Job says is finished!', job.name);
 				requestUpdateBuild(job.name, job.lastBuild.number);
 				buildingJobs[job.name] = false;
-			
+
+				if (isBroken(job.color))
+					speakUp(job);
+
 			} else {
 				requestUpdateBuild(job.name, job.lastBuild.number);
 			}
@@ -194,6 +197,10 @@ angular.module("JenkinsDashboard")
 		return color.match(/_anime/) !== null;
 	}
 
+	function isBroken(color) {
+		return color.match(/red/) !== null || color.match(/yellow/) !== null;
+	}
+
 	function needToUpdateBuild(job) {
 		if (isBuilding($scope.jobs[job.name].color)) {
 			return true;
@@ -209,6 +216,31 @@ angular.module("JenkinsDashboard")
 
 		console.log($ts(),'Job is not building, but no build data, updating. ', job.name, job.lastBuild.number);
 		return true;
+	}
+
+	var messageTemplatesCulprit = [
+		"Hey, guys, {CULPRIT} just broke {JOBNAME}.. yayyy",
+		"Ladies and gentleman, {JOBNAME} is broken. Say thanks to {CULPRIT}",
+		"{JOBNAME} is broken. Maybe {CULPRIT} knows something about it?",
+		"{JOBNAME} is RED. Let's blame {CULPRIT}",
+		"Houston, we have a problem with {JOBNAME}, shall we ask {CULPRIT}?"
+	];
+
+	function getMessage(jobName, culprit) {
+		var n = Math.random() * messageTemplatesCulprit.length | 0,
+			message = messageTemplatesCulprit[n];
+		return message.replace(/{JOBNAME}/g, jobName).replace(/{CULPRIT}/g, culprit);
+	}
+
+	function speakUp(job) {
+		var lastBuild = $scope.lastBuild[job.name],
+			culprit = "someone";
+
+		if (lastBuild.culprits && lastBuild.culprits.length > 0 && lastBuild.culprits[0].fullName) {
+			culprit = lastBuild.culprits[0].fullName.replace(/\./g, ' ');
+		}
+
+		Voice.speak(getMessage(job.name, culprit));
 	}
 
 });
