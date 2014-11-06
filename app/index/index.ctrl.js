@@ -95,21 +95,21 @@ angular.module("JenkinsDashboard")
 
 	function orderByBrokenFirst(job) {
 		if (job.color === "red") {
-			return 0;
+			return 0 + job.name;
 		} else if (job.color.match(/_anime/) !== null) {
-			return 1;
+			return 1 + job.name;
 		} else {
-			return 3;
+			return 3 + job.name;
 		}
 	};
 
 	function orderByRunningFirst(job) {
 		if (job.color.match(/_anime/) !== null) {
-			return 0;
+			return 0 + job.name;
 		} else if (job.color === "red") {
-			return 1;
+			return 1 + job.name;
 		} else {
-			return 2;
+			return 2 + job.name;
 		}
 	};
 
