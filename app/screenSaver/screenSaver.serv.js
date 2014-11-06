@@ -17,6 +17,8 @@ angular.module('JenkinsDashboard')
 		isShown = true;
 		for (var l = showCbs.length; l--;)
 			showCbs[l].call();
+
+		startRotationTimer();
 	}
 
 	function hide() {
@@ -38,15 +40,22 @@ angular.module('JenkinsDashboard')
 		}
 	}
 
-	function changeScreenSaver() {
+	function startRotationTimer() {
 		var rotation = parseFloat(Conf.val.rotation);
 		if (rotation === 0) {
 			$timeout.cancel(screenSaverChangeTimeout)
 			screenSaverChangeTimeout = null;
+			console.log('No rotation, resetting the change timer');
 			return;
 		}
 
-		randomGIF.get({ tag: "dog loop" }, function(res) {
+		$timeout.cancel(screenSaverChangeTimeout)
+		screenSaverChangeTimeout = null;
+		screenSaverChangeTimeout = $timeout(changeScreenSaver, (rotation || Conf.defaults.rotation) * 60 * 1000);
+	}
+
+	function changeScreenSaver() {
+		randomGIF.get({ tag: Conf.val.topic }, function(res) {
 			currentScreenSaver = res.data.image_url;
 			for (var l = changeImageCbs.length; l--;) {
 				changeImageCbs[l].call();
@@ -54,7 +63,9 @@ angular.module('JenkinsDashboard')
 			console.log("New screensaver: ", currentScreenSaver);
 		});
 
-		screenSaverChangeTimeout = $timeout(changeScreenSaver, (rotation || Conf.defaults.rotation) * 60 * 1000);
+		if (isShown) {
+			startRotationTimer();
+		}
 	}
 	changeScreenSaver();
 

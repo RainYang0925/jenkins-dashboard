@@ -8,12 +8,12 @@ angular.module('JenkinsDashboard')
 	var defaults = {
 		address: "localhost:4001",
 		timeout: 2,
-		rotation: 60*20,
-		useScreenSaver: true
+		rotation: 20,
+		useScreenSaver: true,
+		topic: "dog loop"
 	};
 
 	function save() {
-		// Todo: buffer timeout?
 		localStorage['jenkinsDashboardConf'] = JSON.stringify(conf.val);
 	}
 
@@ -27,12 +27,7 @@ angular.module('JenkinsDashboard')
 	}
 
 	var conf = {
-		defaults : {
-			address: "localhost:4001",
-			timeout: 60,
-			rotation: 60*20,
-			useScreenSaver: true
-		},
+		defaults : defaults,
 		save: save,
 		val: read()
 	};

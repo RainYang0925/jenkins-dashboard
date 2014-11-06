@@ -42,8 +42,13 @@
 					</div>
 
 					<div class="form-group" ng-if="conf.useScreenSaver">
-						<label>Timeout (minutes)</label> 
+
+						<label>Screensaver topic (eg: "dog loop")</label>
+						<input type="text" ng-change="setTtopic(topic)" class="form-control" ng-model="conf.topic">
+
+						<label>Screensaver timeout (minutes)</label> 
 						<input type="text" ng-change="setTimeout(timeout)" class="form-control" ng-model="conf.timeout">
+
 						<label>Rotation timeout (minutes)</label> 
 						<input type="text" class="form-control" ng-model="conf.rotation">
 					</div>
