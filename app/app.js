@@ -7,6 +7,7 @@ angular
 		$routeProvider
 			.when('/:viewName', {})
 			.when('/:viewName/:sortBy', {})
+			.when('/:viewName/:sortBy/:filter', {})
 			.otherwise({
 				redirectTo: '/'
 			});

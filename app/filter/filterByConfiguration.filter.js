@@ -11,6 +11,11 @@ angular.module("JenkinsDashboard")
 					return;
 			}
 
+			// No details yet for that job, skip this round
+			if (typeof(lastBuild[job.name]) === "undefined") {
+				return;
+			}
+
 			//filter for user name
 			var lastBuildJob = lastBuild[job.name];
 			if (lastBuildJob.culprits && lastBuildJob.culprits.length > 0 && lastBuildJob.culprits[0] && lastBuildJob.culprits[0].fullName) {
