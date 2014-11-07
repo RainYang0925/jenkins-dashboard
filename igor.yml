@@ -7,7 +7,9 @@ owner:
 build:
   test-and-build:
     run: |
-      ./scripts/test.sh ${BUILD_NUMBER}-${GIT_COMMIT}
+      run_docker.sh -x -d dock.prezi.com:5000/boxfish -- ./scripts/build ${BUILD_NUMBER}-${GIT_COMMIT}
+      ./scripts/uploadAndRelease ${BUILD_NUMBER}-${GIT_COMMIT}
+      # ./scripts/test.sh ${BUILD_NUMBER}-${GIT_COMMIT}
       # ./scripts/build ${BUILD_NUMBER}-${GIT_COMMIT}
     pinned: precise
 # Deploy section is used by igor cook, it will use this information to setup Chef.
