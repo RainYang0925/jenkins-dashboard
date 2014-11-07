@@ -1,5 +1,5 @@
 angular.module("JenkinsDashboard")
-.controller("IndexCtrl", function($scope, $interval, $timeout, Socket, ScreenSaver, Conf, Voice) {
+.controller("IndexCtrl", function($scope, $interval, $timeout, $alert, Socket, ScreenSaver, Conf, Voice) {
 
 	var $ts = function() {
 		var pad = function(n) { return ('0' + n).slice(-2); },
@@ -33,6 +33,18 @@ angular.module("JenkinsDashboard")
 		console.log($ts(), '!!! Disconnected, clearing all timeouts');
 		clearJobsTimeouts();
 		$interval.cancel(updateViewInterval);
+	});
+
+	Socket.on("j error", function(error) {
+		var myAlert = $alert({
+			title: 'Ouch!', 
+			content: 'Error from Jenkins, will retry..', 
+			placement: 'top',
+			type: 'danger',
+			container: '.alert-container',
+			show: true,
+			duration: VIEW_REFRESH_MS / 1000 / 2
+		});
 	});
 
 	function requestUpdateView() {

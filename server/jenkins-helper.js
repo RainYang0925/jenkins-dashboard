@@ -46,6 +46,7 @@ jh.get = function(path) {
 		var finished = true; // (new Date()).getSeconds() > 30;
 
 		if (path === "/view/Boxfish-Koi/api/json") {
+			def.reject('saoao');
 			log("@@@@ VIEW fixture - finished", finished);
 			if (finished)
 				def.resolve(JSON.stringify(fixtures['view-short']));

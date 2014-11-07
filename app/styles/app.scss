@@ -3,12 +3,16 @@ $red: rgb(217, 83, 79);
 $orange: rgb(240, 173, 78);
 $blue: rgb(66, 139, 202);
 
+$base-margin: 6px;
+$header-height: 6 * $base-margin; 
+
+
 .fixed {
 	position: fixed;
-	top: 5px;
-	left: 5px;
-	bottom: 5px;
-	right: 5px;
+	top: $base-margin;
+	left: $base-margin;
+	bottom: $base-margin;
+	right: $base-margin;
 }
 
 .socket-monitor {
@@ -60,23 +64,40 @@ $blue: rgb(66, 139, 202);
 
 
 .jobs-container {
-	padding: 2em;
-	padding-top: 4em;
+	padding: 2 * $base-margin;
+	padding-top: 2 * $base-margin;
 }
 
 body {
-	&.broken { background-color: $red; }
-	&.ok { background-color: $green; }
+	&.broken { 
+		background-color: $red; 
+		.title { color: $red; }
+	}
+	&.ok { 
+		background-color: $green;
+		.title { color: $green; }
+	}
 }
 
-h1.dashboard-title {
-	position: absolute;
-	right: 0px;
-	margin: 0px;
-	margin-right: 2em;
-	font-size: 53px;
-	font-weight: 900;
-	text-shadow: 1px 1px 10px #ccc;
+.dashboard-header {
+	display: flex;
+	height: $header-height;
+	.controls {
+		width: 200px;
+		margin-right: auto;
+	}
+	.alert-container {
+		display: flex;
+		.alert {
+			margin: auto 0px;
+			padding: 5px 2*$base-margin;
+			height: $header-height - $base-margin;
+			.close {
+				margin-left: 2*$base-margin;
+			}
+		}
+		margin-right: 2*$base-margin;
+	}
 }
 
 
