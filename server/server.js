@@ -7,12 +7,23 @@ var io = require('socket.io').listen(4001),
 var credentials;
 fs.readFile('auth.txt', 'utf8', function (err, data) {
 	if (err) {
-		console.log('## ERROR: auth.txt not found!\nPlease provide credentials using user:pass format.');
-		process.exit(1);
-		throw err;
+
+		fs.readFile('/etc/prezi/jenkinsdashboard/auth.txt', 'utf8', function (_err, _data) {
+			if (_err) {
+				console.log('## ERROR: auth.txt not found!\nPlease provide credentials using user:pass format.');
+				process.exit(1);
+				throw err;
+			}
+
+			jenkins.setCredentials(_data.trim());
+			console.log('###### Jenkins dashboard server up and running.');
+			return;
+		});
+
+	} else {
+		jenkins.setCredentials(data.trim());
+		console.log('###### Jenkins dashboard server up and running.');
 	}
-	jenkins.setCredentials(data.trim());
-	console.log('###### Jenkins dashboard server up and running.');
 });
 
 jenkins.setDebug(true);
