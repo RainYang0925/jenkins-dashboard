@@ -30,7 +30,12 @@ angular.module('JenkinsDashboard')
 
 		var changed = false;
 		["viewName", "sortBy", "filter"].forEach(function(p) {
-			if (next.params[p]) {
+			// Dealing with an empty filter in a special case, so the user can either 
+			// delete it from the search box or in the URL, they will get in sync eventually
+			if (p === "filter" && next.params.filter === '' || typeof(next.params.filter) === "undefined") {
+				changed = true;
+				conf.val.filter = "";
+			} else if (next.params[p]) {
 				changed = true;
 				conf.val[p] = next.params[p];
 			}
