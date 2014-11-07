@@ -7,7 +7,7 @@ ok() { echo "OK $@"; exit 0; }
 
 # EDITME
 
-response=$(curl -Lsf http://localhost:8000/healthcheck/ -w '%{http_code}' -o /dev/null) || fail "unable to curl"
+response=$(curl -Lsf http://localhost:4000/ -w '%{http_code}' -o /dev/null) || fail "unable to curl"
 
 if [ "$response" = "200" ]; then
     ok "$response"

@@ -5,3 +5,9 @@
 set -e
 
 . $(dirname $0)/common
+
+
+
+# TODO: Check if there's npm, if not install it
+
+npm install
