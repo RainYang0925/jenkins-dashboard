@@ -1,7 +1,5 @@
 #!/bin/sh -e
 
-# Jenkins script that packages, uploads and releases (write to placement) your service. #build#deploy#aws#idoc
-
 . $(dirname $0)/common
 
 RELEASE_ID=$1; shift
@@ -15,10 +13,12 @@ error() { echo "$@"; exit 1; }
 
 root=$(dirname $0 | xargs dirname)
 
-package=$(${root}/scripts/package "${RELEASE_ID}")
 
-echo "Packaged ${PROJECT_NAME} version ${RELEASE_ID}"
+package=`cat tarball.name.txt`
 
-# uploaded_package=$(${root}/scripts/upload "${package}")
-# ${root}/scripts/release ${RELEASE_ID} "${uploaded_package}"
-# echo "Released ${PROJECT_NAME} version ${RELEASE_ID}"
+echo "Uploading and releasing tarball name: ${package}"
+
+uploaded_package=$(${root}/scripts/upload "${package}")
+${root}/scripts/release ${RELEASE_ID} "${uploaded_package}"
+
+echo "Released ${PROJECT_NAME} version ${RELEASE_ID}"

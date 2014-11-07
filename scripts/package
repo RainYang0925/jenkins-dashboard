@@ -39,4 +39,6 @@ tar cjf $tarball --transform "s/^\./$PROJECT_NAME-$RELEASE_ID/" -C $temp .
 
 rm -rf $temp
 
+echo $tarball > ${root}/tarball.name.txt
+
 echo $tarball
