@@ -32,7 +32,17 @@
 
 							</span>
 						</div>
-						</div>
+					</div>
+
+					<div class="input-group">
+						<label>View</label>
+						<input 
+							type="text" 
+							class="form-control" 
+							ng-model="conf.viewName" 
+							ng-options="view for view in data.views" 
+							bs-typeahead>
+					</div>
 
 					<div class="select-order form-group">
 						<label> Order </label>

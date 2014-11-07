@@ -1,5 +1,5 @@
 angular.module('JenkinsDashboard')
-.controller('confModalCtrl', function($scope, $window, Conf, ScreenSaver) {
+.controller('confModalCtrl', function($scope, $window, Conf, ScreenSaver, Socket) {
 
 	$scope.conf = Conf.val;
 
@@ -8,6 +8,7 @@ angular.module('JenkinsDashboard')
 	$scope.$watch('conf.rotation', function(v) { Conf.save(); });
 	$scope.$watch('conf.topic', function(v) { Conf.save(); });
 	$scope.$watch('conf.order', function(v) { Conf.save(); });
+	$scope.$watch('conf.viewName', function(v) { Conf.save(); });
 
 	$scope.$watch('conf', function() {
 		ScreenSaver.hide();
@@ -17,5 +18,7 @@ angular.module('JenkinsDashboard')
 		Conf.save();
 		$window.location.reload();
 	}
+
+	Socket.emit("j update-views");
 
 });

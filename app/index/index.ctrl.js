@@ -18,6 +18,7 @@ angular.module("JenkinsDashboard")
 	$scope.details = {};
 	$scope.lastBuild = {};
 	$scope.conf = Conf.val;
+	$scope.views = [];
 
 	var updateViewInterval;
 	Socket.on("connect", function() {
@@ -49,7 +50,7 @@ angular.module("JenkinsDashboard")
 
 	function requestUpdateView() {
 		if (disconnected) { console.log($ts(), '!! Disconnected !!'); return; }
-		Socket.emit("j update-view", "Boxfish-Koi");
+		Socket.emit("j update-view", Conf.val.viewName);
 	}
 
 	function requestUpdateJob(jobName) {

@@ -62,6 +62,12 @@ io.sockets.on('connection', function(socket) {
 		}, errorFromJenkins);
 	});
 
+	socket.on('j update-views', function(view) {
+		jenkins.updateAllJobs().then(function(res) {
+			socket.emit('j update-views', res.views);
+		}, errorFromJenkins);
+	});
+
 
 	socket.on('j update-all', function(view) {
 		jenkins.updateAllJobs().then(function(res) {
