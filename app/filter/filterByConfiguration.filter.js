@@ -4,13 +4,14 @@ angular.module("JenkinsDashboard")
 		var filtered = [];
 		var filterString = Conf.val.filter.toLowerCase();
 
-		console.log('Filtering');
 		angular.forEach(jobs, function(job) {
+			//filter for names
 			if (job.name.match(filterString) !== null) {
 					filtered.push(job);
 					return;
 			}
 
+			//filter for user name
 			var lastBuildJob = lastBuild[job.name];
 			if (lastBuildJob.culprits && lastBuildJob.culprits.length > 0 && lastBuildJob.culprits[0] && lastBuildJob.culprits[0].fullName) {
 				if (lastBuildJob.culprits[0].fullName.toLowerCase().match(filterString) !== null) {
@@ -19,6 +20,7 @@ angular.module("JenkinsDashboard")
 				}
 			}
 
+			//filter for shortDescription
 			if (lastBuildJob.actions) {
 				var actions = lastBuildJob.actions;
 				for (var l = actions.length; l--;) {
@@ -35,7 +37,18 @@ angular.module("JenkinsDashboard")
 				}
 			}
 
+			//filter for changeSet.msg
+			if (lastBuildJob.changeSet) {
+				var changeSet = lastBuildJob.changeSet;
+				if (changeSet.items && changeSet.items.length > 0 && changeSet.items[0].msg) {
+					if (changeSet.items[0].msg.match(filterString)) {
+						filtered.push(job); 
+						return;
+					}
+				}
+			}
 		}) 
+
 		return filtered;
 	}
 })
