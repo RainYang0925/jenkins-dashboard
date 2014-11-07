@@ -6,7 +6,7 @@ angular.module("JenkinsDashboard")
 
 		angular.forEach(jobs, function(job) {
 			//filter for names
-			if (job.name.match(filterString) !== null) {
+			if (job.name.toLowerCase().match(filterString) !== null) {
 					filtered.push(job);
 					return;
 			}
@@ -25,11 +25,11 @@ angular.module("JenkinsDashboard")
 				var actions = lastBuildJob.actions;
 				for (var l = actions.length; l--;) {
 					if (actions[l] && actions[l].causes) {
-						if (actions[l].causes[0].userName && actions[l].causes[0].userName.match(filterString) !== null) {
+						if (actions[l].causes[0].userName && actions[l].causes[0].userName.toLowerCase().match(filterString) !== null) {
 							filtered.push(job); 
 							return;
 						}
-						if (actions[l].causes[0].shortDescription && actions[l].causes[0].shortDescription.match(filterString) !== null) {
+						if (actions[l].causes[0].shortDescription && actions[l].causes[0].shortDescription.toLowerCase().match(filterString) !== null) {
 							filtered.push(job); 
 							return;
 						}
@@ -41,7 +41,7 @@ angular.module("JenkinsDashboard")
 			if (lastBuildJob.changeSet) {
 				var changeSet = lastBuildJob.changeSet;
 				if (changeSet.items && changeSet.items.length > 0 && changeSet.items[0].msg) {
-					if (changeSet.items[0].msg.match(filterString)) {
+					if (changeSet.items[0].msg.toLowerCase().match(filterString)) {
 						filtered.push(job); 
 						return;
 					}
