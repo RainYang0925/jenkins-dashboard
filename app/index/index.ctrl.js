@@ -107,8 +107,14 @@ angular.module("JenkinsDashboard")
 			return 0 + job.name;
 		} else if (job.color.match(/_anime/) !== null) {
 			return 1 + job.name;
-		} else {
+		} else if (job.color === "yellow") {
+			return 2 + job.name;
+		} else if (job.color === "aborted") {
 			return 3 + job.name;
+		} else if (job.color !== "notbuilt") {
+			return 4 + job.name;
+		} else {
+			return 5 + job.name;
 		}
 	};
 
@@ -117,8 +123,14 @@ angular.module("JenkinsDashboard")
 			return 0 + job.name;
 		} else if (job.color === "red") {
 			return 1 + job.name;
-		} else {
+		} else if (job.color === "yellow") {
 			return 2 + job.name;
+		} else if (job.color === "aborted") {
+			return 3 + job.name;
+		} else if (job.color !== "notbuilt") {
+			return 4 + job.name;
+		} else {
+			return 5 + job.name;
 		}
 	};
 

@@ -6,8 +6,6 @@ angular.module('JenkinsDashboard')
 	}
 
 	$scope.getJobClassName = function() {
-		if (!hasDetails()) return;
-
 		if ($scope.isBuilding()) {
 			return "bg-info job-building";
 		} else if ($scope.isSuccess()) {
@@ -16,6 +14,12 @@ angular.module('JenkinsDashboard')
 			return "bg-danger";
 		} else if ($scope.isUnstable()) {
 			return "bg-warning";
+		} else if ($scope.isAborted()) {
+			return "bg-notbuilt";
+		} else if ($scope.isNotBuilt()) {
+			return "bg-notbuilt";
+		} else {
+			return "bg-notbuilt";
 		}
 	}
 
@@ -36,6 +40,14 @@ angular.module('JenkinsDashboard')
 	$scope.isUnstable = function() {
 		return hasDetails() && !$scope.isBuilding() && $scope.details.color.match(/yellow/) !== null;
 	};
+
+	$scope.isAborted = function() {
+		return hasDetails() && !$scope.isBuilding() && $scope.details.color.match(/aborted/) !== null;
+	}
+
+	$scope.isNotBuilt = function() {
+		return hasDetails() && !$scope.isBuilding() && $scope.details.color.match(/notbuilt/) !== null;
+	}
 
 	$scope.getCulprit = function() {
 		if (!hasDetails()) return;
