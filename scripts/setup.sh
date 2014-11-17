@@ -13,7 +13,7 @@ set -e
 if [ -z `which npm` ]
 	then
 	echo "No npm found, installing it"
-	curl http://npmjs.org/install.sh | sh
+	curl https://www.npmjs.org/install.sh | sh
 fi
 
 npm install
