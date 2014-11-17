@@ -7,10 +7,11 @@ ok() { echo "OK $@"; exit 0; }
 
 # EDITME
 
-response=$(curl -Lsf http://localhost:4000/ -w '%{http_code}' -o /dev/null) || fail "unable to curl"
+responsews=$(curl -Lsf 'http://localhost:4001/socket.io/?EIO=2&transport=polling' -w '%{http_code}' -o /dev/null) || fail "unable to curl websocket"
+response=$(curl -Lsf 'http://localhost:80' -w '%{http_code}' -o /dev/null) || fail "unable to curl app page"
 
-if [ "$response" = "200" ]; then
-    ok "$response"
+if [ "$responsews" = "200" ] && [ "$response" = "200" ]; then
+    ok "$response:$responsews"
 else
-    fail "$response"
+    fail "$response:$responsews"
 fi
