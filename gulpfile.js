@@ -4,6 +4,7 @@ var connectLr         = require('connect-livereload'),
 	express           = require('express'),
 	expressPort       = 4000,
 	expressRoot       = require('path').resolve('./.tmp'),
+	buildRoot         = require('path').resolve('./build'),
 	gulp              = require('gulp'),
 	liveReloadPort    = 35729,
 	lrServer          = require('tiny-lr')(),
@@ -37,7 +38,7 @@ gulp.task('live reload', function() {
 
 gulp.task('clean', function() {
 	return gulp
-		.src([expressRoot], { read: false })
+		.src([expressRoot, buildRoot], { read: false })
 		.pipe(plugins.rimraf({ force: true }))
 		.on('error', plugins.util.log);
 });
@@ -47,9 +48,10 @@ gulp.task('js app', ['templates'], function() {
 		.src(['app/app.js', 'app/**/*.js', expressRoot + '/tmp.debug/templates.js'])
 		.pipe(plugins.plumber())
 		.pipe(plugins.concat('app.js'))
-		.pipe(gulp.dest(expressRoot + '/tmp.debug/'))
-		//.pipe(plugins.ngAnnotate())
-		//.pipe(plugins.uglify())
+		// If you need to check the compiled source file (not annotated, not uglified):
+		// .pipe(gulp.dest(expressRoot + '/tmp.debug/'))
+		.pipe(plugins.ngAnnotate())
+		.pipe(plugins.uglify())
 		.pipe(gulp.dest(expressRoot + '/app'))
 		.on('end', notifyLiveReload)
 		.on('error', plugins.util.log);
@@ -84,6 +86,14 @@ gulp.task('templates', function() {
 		.on('error', plugins.util.log);
 });
 
+gulp.task('copy build', function() {
+
+	gulp
+		.src(expressRoot + '/**/*')
+		.pipe(gulp.dest(buildRoot));
+
+});
+
 gulp.task('copy libs', function() {
 
 	gulp
@@ -106,7 +116,6 @@ gulp.task('copy libs', function() {
 			'./assets/angular-strap/dist/angular-strap.min.js', 
 			'./assets/angular-strap/dist/angular-strap.tpl.min.js', 
 			'./assets/bootstrap/dist/css/bootstrap.min.css',
-			'./assets/bootstrap/dist/fonts/',
 			'./assets/socket.io-client/socket.io.js'
 		])
 		.pipe(gulp.dest(expressRoot + '/assets'))
@@ -156,7 +165,7 @@ gulp.task('server restart', function() {
 });
 
 gulp.task('build', function() {
-	console.log('The build task still needs to be done. :)');
+	plugins.runSequence('clean', 'copy libs', 'templates', 'js app', 'styles', 'index', 'copy build');
 });
 
 // TODO: Not quite sure the tasks get execute properly, race conditions? Use https://www.npmjs.org/package/gulp-run-sequence ?
