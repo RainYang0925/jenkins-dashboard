@@ -39,7 +39,7 @@ jh.get = function(path) {
 
 
 	// Use the fixtures? No jenkins requests at all.
-	if (!false) {
+	if (false) {
 
 		// Finished = true -> no building job, 
 		// seconds > 30 -> every 30s it switches from building to finished
