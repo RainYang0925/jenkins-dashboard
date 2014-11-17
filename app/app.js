@@ -2,7 +2,8 @@ angular
 	.module("JenkinsDashboard", ['mgcrea.ngStrap', 'ngResource', 'ngRoute'])
 	.config(function($locationProvider, $routeProvider) {
 
-		$locationProvider.html5Mode(false);
+		// See https://github.com/angular-ui/ui-router/wiki/Frequently-Asked-Questions#how-to-configure-your-server-to-work-with-html5mode
+		$locationProvider.html5Mode(true);
 
 		$routeProvider
 			.when('/:viewName', {})

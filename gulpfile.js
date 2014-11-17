@@ -126,26 +126,27 @@ gulp.task('index', function() {
 
 	function inject(glob, tag) {
 		return plugins.inject(
-			gulp.src(glob, { cwd: path }), { starttag: '<!-- inject:' + tag + ':{{ext}} -->' }
+			gulp.src(glob, { cwd: path }), 
+			{ addRootSlash: false, starttag: '<!-- inject:' + tag + ':{{ext}} -->' }
 		);
 	}
 
 	return gulp
 		.src('app/index.html')
-		.pipe(inject('./styles/app*.css', 'app-style'))
-		.pipe(inject('./app/app*.js', 'app'))
-		.pipe(inject('./app/templates*.js', 'templates'))
+		.pipe(inject('styles/app*.css', 'app-style'))
+		.pipe(inject('app/app*.js', 'app'))
+		.pipe(inject('app/templates*.js', 'templates'))
 		.pipe(inject(
 			[
-				'./assets/angular.js', 
-				'./assets/angular-resource.js',
-				'./assets/angular-route.js',
-				'./assets/angular-strap.min.js',
-				'./assets/angular-strap.tpl.min.js',
-				'./assets/socket.io.js'
+				'assets/angular.js', 
+				'assets/angular-resource.js',
+				'assets/angular-route.js',
+				'assets/angular-strap.min.js',
+				'assets/angular-strap.tpl.min.js',
+				'assets/socket.io.js'
 			], 
 			'assets'))
-		.pipe(inject('./styles/assets/*.css', 'assets'))
+		.pipe(inject('styles/assets/*.css', 'assets'))
 		.pipe(gulp.dest(expressRoot))
 		.on('end', notifyLiveReload)
 		.on('error', plugins.util.log);
