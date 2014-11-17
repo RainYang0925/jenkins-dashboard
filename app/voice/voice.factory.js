@@ -1,5 +1,5 @@
 angular.module('JenkinsDashboard')
-.service('Voice', function(Conf) {
+.factory('Voice', function(Conf) {
 
 	function speak(message) {
 		if (!Conf.val.isSpeechSynthesisSupported || !Conf.val.useSpeechSynthesis) return;

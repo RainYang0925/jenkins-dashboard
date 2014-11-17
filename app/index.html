@@ -16,11 +16,7 @@
 		<header ng-include="'index/header.tmpl.html'"></header>
 
 		<div class="jobs-container">
-			<job-item 
-				ng-repeat="job in jobsArray | filterByConfiguration:lastBuild | orderBy:orderByConfiguration" 
-				job="job" 
-				details="details[job.name]"
-				last-build="lastBuild[job.name]"></job-item>
+			<job-item ng-repeat="job in Jobs.sortedJobs()" job="job"></job-item>
 		</div>
 
 		<!-- inject:assets:js --><!-- endinject -->

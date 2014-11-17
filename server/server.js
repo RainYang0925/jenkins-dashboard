@@ -44,44 +44,44 @@ io.sockets.on('connection', function(socket) {
 	});
 
 	socket.on('j update-view', function(view) {
-		jenkins.updateView(view).then(function(res) {
-			socket.emit('j update-view', res);
+		jenkins.updateView(socket.id, view).then(function(res) {
+			socket.emit('j update-view', res, view);
 		}, errorFromJenkins);
 	});
 
 	socket.on('j update-job', function(job) {
-		jenkins.updateJob(job).then(function(res) {
+		jenkins.updateJob(socket.id, job).then(function(res) {
 			socket.emit('j update-job', res);
 		}, errorFromJenkins);
 	});
 
 	socket.on('j update-job-fast', function(job) {
-		jenkins.updateJobFast(job).then(function(res) {
+		jenkins.updateJobFast(socket.id, job).then(function(res) {
 			socket.emit('j update-job', res);
 		}, errorFromJenkins);
 	});
 
 	socket.on('j update-build', function(ob) {
-		jenkins.updateBuild(ob.jobName, ob.buildNumber).then(function(res) {
+		jenkins.updateBuild(socket.id, ob.jobName, ob.buildNumber).then(function(res) {
 			socket.emit('j update-build', ob.jobName, res);
 		}, errorFromJenkins);
 	});
 
 	socket.on('j update-build-fast', function(ob) {
-		jenkins.updateBuildFast(ob.jobName, ob.buildNumber).then(function(res) {
+		jenkins.updateBuildFast(socket.id, ob.jobName, ob.buildNumber).then(function(res) {
 			socket.emit('j update-build', ob.jobName, res);
 		}, errorFromJenkins);
 	});
 
-	socket.on('j update-views', function(view) {
-		jenkins.updateAllJobs().then(function(res) {
+	socket.on('j update-views', function() {
+		jenkins.updateAllJobs(socket.id).then(function(res) {
 			socket.emit('j update-views', res.views);
 		}, errorFromJenkins);
 	});
 
 
-	socket.on('j update-all', function(view) {
-		jenkins.updateAllJobs().then(function(res) {
+	socket.on('j update-all', function() {
+		jenkins.updateAllJobs(socket.id).then(function(res) {
 			socket.emit('j update-all', res);
 		}, errorFromJenkins);
 	});

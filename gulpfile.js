@@ -48,8 +48,8 @@ gulp.task('js app', ['templates'], function() {
 		.pipe(plugins.plumber())
 		.pipe(plugins.concat('app.js'))
 		.pipe(gulp.dest(expressRoot + '/tmp.debug/'))
-		.pipe(plugins.ngAnnotate())
-		.pipe(plugins.uglify())
+		//.pipe(plugins.ngAnnotate())
+		//.pipe(plugins.uglify())
 		.pipe(gulp.dest(expressRoot + '/app'))
 		.on('end', notifyLiveReload)
 		.on('error', plugins.util.log);
@@ -93,6 +93,10 @@ gulp.task('copy libs', function() {
 	gulp
 		.src('./assets/bootstrap/dist/fonts/*')
 		.pipe(gulp.dest(expressRoot + '/styles/fonts'));
+
+	gulp
+		.src('./app/styles/img/*')
+		.pipe(gulp.dest(expressRoot + '/styles/img'));
 
 	return gulp
 		.src([

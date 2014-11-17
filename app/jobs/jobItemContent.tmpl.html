@@ -1,22 +1,26 @@
-<div class="job-content">
+<div suspendable class="job-content">
 	<h3 class="name">
-		<span ng-if="isBuilding()" class="job-status time-left">
-			{{getTimeLeft()}}
+		<span ng-show="job.isBuilding()" class="job-status time-left">
+			{{ job.timeLeft }}
 		</span>
 
 		<span 
-			ng-if="!isBuilding()" 
+			ng-show="!job.isBuilding()" 
 			class="job-status label" 
-			ng-class="{'label-warning': isUnstable(), 'label-danger': isFailure()}">
+			ng-class="{'label-warning': job.isUnstable(), 'label-danger': job.isFailure()}">
 
-			<i ng-if="isSuccess()" class="glyphicon glyphicon-ok"></i>
-			<i ng-if="isFailure()" class="glyphicon glyphicon-thumbs-down"></i>
-			<i ng-if="isUnstable()" class="glyphicon glyphicon-eye-open"></i>
+			<i ng-show="job.isSuccess()" class="glyphicon glyphicon-ok"></i>
+			<i ng-show="job.isFailure()" class="glyphicon glyphicon-fire"></i>
+			<i ng-show="job.isUnstable()" class="glyphicon glyphicon-eye-open"></i>
+			<i ng-show="job.isAborted()" class="glyphicon glyphicon-remove-circle"></i>
+			<!-- todo is aborted? not-built? -->
 		</span>
 
-		{{job.name}}
+		{{ job.name }}
 	</h3>
 
-	<span>{{getCulprit()}}</span>
-	<span>{{lastBuild.changeSet.items[0].msg}}</span>
+	<span>{{ job.culprit }}</span>
+	<span>
+		{{ job.message }}
+	</span>
 </div>

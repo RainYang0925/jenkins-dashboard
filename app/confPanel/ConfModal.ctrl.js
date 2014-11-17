@@ -7,8 +7,17 @@ angular.module('JenkinsDashboard')
 	$scope.$watch('conf.timeout', function() { Conf.save(); });
 	$scope.$watch('conf.rotation', function(v) { Conf.save(); });
 	$scope.$watch('conf.topic', function(v) { Conf.save(); });
-	$scope.$watch('conf.order', function(v) { Conf.save(); });
-	$scope.$watch('conf.viewName', function(v) { Conf.save(); });
+	$scope.$watch('conf.sortBy', function(v) { Conf.save(); });
+	$scope.$watch('conf.viewName', function(v) { 
+		Conf.save(); 
+		$scope.inputViewName = v;
+	});
+
+	$scope.saveViewName = function() {
+		$scope.conf.filter = '';
+		$scope.conf.viewName = $scope.inputViewName;
+		$scope.$hide();
+	}
 
 	$scope.$watch('conf', function() {
 		ScreenSaver.hide();

@@ -1,5 +1,5 @@
 angular.module('JenkinsDashboard')
-.service('Conf', function($rootScope, $compile, $modal, $route, $routeParams, $location) {
+.factory('Conf', function($rootScope, $compile, $modal, $route, $routeParams, $location) {
 
 	angular.element(document.querySelector('body')).append("<conf-button></conf-button>");
 	$compile(document.querySelector('conf-button'))($rootScope);
@@ -11,7 +11,7 @@ angular.module('JenkinsDashboard')
 		rotation: 20,
 		useScreenSaver: true,
 		topic: "dog loop",
-		order: "name",
+		sortBy: "name",
 		viewName: "Boxfish-Koi",
 		filter: "",
 		useSpeechSynthesis: true,
@@ -32,7 +32,7 @@ angular.module('JenkinsDashboard')
 		["viewName", "sortBy", "filter"].forEach(function(p) {
 			// Dealing with an empty filter in a special case, so the user can either 
 			// delete it from the search box or in the URL, they will get in sync eventually
-			if (p === "filter" && next.params.filter === '' || typeof(next.params.filter) === "undefined") {
+			if (p === "filter" && (next.params.filter === '' || typeof(next.params.filter) === "undefined")) {
 				changed = true;
 				conf.val.filter = "";
 			} else if (next.params[p]) {
@@ -43,14 +43,16 @@ angular.module('JenkinsDashboard')
 
 		// If it's empty, the user entered an empty url, we already read the defaults (or the
 		// localstorage conf), so we need to save it in the url too
-		if (changed || typeof(next.params.viewName) === "undefined")
+		if (!changed || typeof(next.params.viewName) === "undefined") {
 			setLocationFromConf();
+		}
+
 	});
 
 	function setLocationFromConf() {
 		var path = "/" + conf.val.viewName;
 
-		path += "/" + conf.val.order;
+		path += "/" + conf.val.sortBy;
 
 		if (conf.val.filter !== '') {
 			path += "/" + conf.val.filter;

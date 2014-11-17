@@ -1,6 +1,6 @@
-<div class="job-item {{getJobClassName()}}">
+<div suspendable class="job-item {{ job.getClassName() }}" ng-show="job.matchesFilter">
 
 	<div ng-include="'jobs/jobItemContent.tmpl.html'"></div>
-	<div class="job-progress" style="width: {{getCompletionPercentage()}}%" ng-include="'jobs/jobItemContent.tmpl.html'"></div>
+	<div class="job-progress" style="width: {{ job.completionPercentage }}%" ng-include="'jobs/jobItemContent.tmpl.html'"></div>
 
 </div>

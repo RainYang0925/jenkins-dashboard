@@ -1,5 +1,5 @@
 angular.module('JenkinsDashboard')
-.service('ScreenSaver', function($timeout, $rootScope, $resource, Conf) {
+.factory('ScreenSaver', function($timeout, $rootScope, $resource, Conf) {
 
 	// TODO: this is the 'beta' key, request a proper one when ready to go live!
 	var GIPHY_API_KEY = "dc6zaTOxFJmzC",
@@ -57,6 +57,7 @@ angular.module('JenkinsDashboard')
 	}
 
 	function changeScreenSaver() {
+		/*
 		randomGIF.get({ tag: Conf.val.topic }, function(res) {
 			currentScreenSaver = res.data.image_url;
 			for (var l = changeImageCbs.length; l--;) {
@@ -64,6 +65,13 @@ angular.module('JenkinsDashboard')
 			}
 			console.log("New screensaver: ", currentScreenSaver);
 		});
+		*/
+
+		currentScreenSaver = "http://media.giphy.com/media/TabwFck9vEt44/giphy.gif";
+		for (var l = changeImageCbs.length; l--;) {
+			changeImageCbs[l].call();
+		}
+		console.log("New screensaver: ", currentScreenSaver);
 
 		if (isShown) {
 			startRotationTimer();
