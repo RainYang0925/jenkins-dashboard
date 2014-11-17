@@ -10,4 +10,10 @@ set -e
 
 # TODO: Check if there's npm, if not install it
 
+if [ -z `which npm` ]
+	then
+	echo "No npm found, installing it"
+	curl http://npmjs.org/install.sh | sh
+fi
+
 npm install
