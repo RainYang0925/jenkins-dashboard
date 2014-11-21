@@ -16,15 +16,16 @@ angular.module('JenkinsDashboard')
 	}
 
 	$scope.data = {
-		views: []
+		views: [],
+		viewsNumberTooltip: "Loading views.."
 	};
 
 	Socket.on("j update-views", function(views) {
-		$scope.data.views.length = 0;
+		$scope.data.viewsNumberTooltip = "Available views";
+		$scope.data.views = [];
 		for (var i = 0; i < views.length; i++) {
 			$scope.data.views.push(views[i].name);
 		}
-
 	});
 
 

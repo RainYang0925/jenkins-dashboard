@@ -1,9 +1,5 @@
 angular.module('JenkinsDashboard')
-.factory('Conf', function($rootScope, $compile, $modal, $route, $routeParams, $location) {
-
-	angular.element(document.querySelector('body')).append("<conf-button></conf-button>");
-	$compile(document.querySelector('conf-button'))($rootScope);
-	$rootScope.$$phase || $rootScope.$digest();
+.factory('Conf', function($rootScope, $modal, $route, $routeParams, $location) {
 
 	var defaults = {
 		address: "localhost:4001",
@@ -12,7 +8,7 @@ angular.module('JenkinsDashboard')
 		useScreenSaver: true,
 		topic: "dog loop",
 		sortBy: "name",
-		viewName: "Boxfish-Koi",
+		viewName: "Boxfish-Editor",
 		filter: "",
 		useSpeechSynthesis: true,
 		isSpeechSynthesisSupported: false

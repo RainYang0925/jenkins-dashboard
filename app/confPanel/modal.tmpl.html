@@ -17,7 +17,7 @@
 							<input 
 								name="address"
 								class="form-control" 
-								ng-placeholder="Server address, like localhost:4000 or something" 
+								placeholder="Server address, like localhost:4000 or something" 
 								ng-model="conf.address">
 
 							<span class="input-group-btn">
@@ -34,9 +34,9 @@
 					<div class="form-group">
 						<label>View</label>
 						<div class="input-group">
-							<span class="input-group-addon">
+							<span class="input-group-addon" bs-tooltip="data.viewsNumberTooltip" data-container="body">
 								<i class="loading-viewname glyphicon glyphicon-refresh" ng-if="data.views.length == 0"></i>
-								{{data.views.length}}
+								{{ data.views.length || ''}}
 							</span>
 							<input 
 								name="viewname"

@@ -18,8 +18,11 @@ $header-height: 6 * $base-margin;
 .socket-monitor {
 	background: rgba(0,0,0, 0.75);
 	display: flex;
+	display: -webkit-flex;
 	align-items: center;
+	-webkit-align-items: center;
 	justify-content: center;
+	-webkit-justify-content: center;
 	z-index: 999;
 
 	&.connected .message {
@@ -49,6 +52,7 @@ $header-height: 6 * $base-margin;
 	overflow: hidden;
 	display: flex;
 	align-items: center;
+	-webkit-align-items: center;
 	justify-content: center;
 	transition: opacity 0.2s ease-in;
 
@@ -91,13 +95,42 @@ body {
 
 .dashboard-header {
 	display: flex;
+	display: -webkit-flex;
 	height: $header-height;
 	.controls {
-		width: 200px;
+
+		padding-left: 2*$base-margin;
+		padding-top: 2*$base-margin;
+		width: 400px;
 		margin-right: auto;
+
+		.conf-button {
+			cursor: pointer;
+			opacity: 0.7;
+			&:hover {
+				opacity: 1;
+			}
+		}
+
+		.job-filter {
+			.job-filter-input-group {
+				input {
+					padding-left: 35px;
+					font-size: 20px;
+				}
+				i {
+					opacity: 0.5;
+					position: absolute;
+					z-index: 3;
+					margin-left: 2 * $base-margin;
+					top: 22px;
+				}
+			}
+		}
 	}
 	.alert-container {
 		display: flex;
+		display: -webkit-flex;
 		.alert {
 			margin: auto 0px;
 			padding: 5px 2*$base-margin;
@@ -117,7 +150,9 @@ body {
 	.job-content {
 		position: absolute;
 		display: flex;
+		display: -webkit-flex;
 		align-items: center;
+		-webkit-align-items: center;
 		height: 3em;
 		width: 100%;
 		background: transparent;
@@ -172,22 +207,28 @@ body {
 
 }
 
-.modal-backdrop.am-fade {
-  opacity: .5;
-  transition: opacity .15s linear;
-  &.ng-enter {
-    opacity: 0;
-    &.ng-enter-active {
-      opacity: .5;
-    }
-  }
-  &.ng-leave {
-    opacity: .5;
-    &.ng-leave-active {
-      opacity: 0;
-    }
-  }
+.modal-backdrop {
+	bottom: 0px;
+	z-index: 999;
+
+	&.am-fade {
+		opacity: .5;
+		transition: opacity .15s linear;
+		&.ng-enter {
+			opacity: 0;
+			&.ng-enter-active {
+				opacity: .5;
+			}
+		}
+		&.ng-leave {
+			opacity: .5;
+			&.ng-leave-active {
+				opacity: 0;
+			}
+		}
+	}
 }
+
 
 .modal.center .modal-dialog {
 	position: fixed;
@@ -201,8 +242,8 @@ body {
 }
 
 @-webkit-keyframes spin { 
-	0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+	0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
 }
 @keyframes spin { 
 	0% { transform: rotate(0deg); }
@@ -212,47 +253,6 @@ body {
 i.loading-viewname {
 	animation: spin 2s infinite;
 	-webkit-animation: spin 2s infinite;
-}
-
-.conf-button {
-	position: absolute;
-	left: $base-margin * 2;
-	top: 10px;
-	cursor: pointer;
-	opacity: 0.7;
-	&:hover {
-		opacity: 1;
-	}
-}
-
-.job-filter {
-	position: absolute;
-	left: 55px;
-	top: 10px;
-	width: 200px;
-
-	.job-filter-input-group {
-		input {
-			padding-left: 35px;
-			font-size: 20px;
-		}
-		i {
-			opacity: 0.5;
-			position: absolute;
-			z-index: 3;
-			margin-left: 2 * $base-margin;
-			top: 10px;
-		}
-	}
-
-}
-
-.job-filter-button {
-	cursor: pointer;
-	opacity: 0.7;
-	&:hover {
-		opacity: 1;
-	}
 }
 
 .bg-aborted {
