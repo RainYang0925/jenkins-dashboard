@@ -17,3 +17,4 @@ if [ -z `which npm` ]
 fi
 
 npm install
+node_modules/gulp/bin/gulp.js build
