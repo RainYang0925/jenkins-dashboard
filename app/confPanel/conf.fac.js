@@ -8,7 +8,7 @@ angular.module('JenkinsDashboard')
 		useScreenSaver: true,
 		topic: "dog loop",
 		sortBy: "name",
-		viewName: "Boxfish-Editor",
+		viewName: "Boxfish-editor",
 		filter: "",
 		useSpeechSynthesis: true,
 		isSpeechSynthesisSupported: false

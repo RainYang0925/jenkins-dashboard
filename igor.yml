@@ -2,7 +2,7 @@ name: "jenkinsdashboard"
 description: "A better dashboard for jenkins"
 owner:
   email: "simone.fonda@prezi.com"
-  hipchat: "koi"
+  hipchat: "boxfish"
 # Build section is used for your Jenkins jobs. By default it creates jenkinsdashboard-build # EDITME
 build:
   test-and-build:

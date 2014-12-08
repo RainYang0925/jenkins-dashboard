@@ -2,7 +2,7 @@ angular.module('JenkinsDashboard')
 .factory('ScreenSaver', function($timeout, $rootScope, $resource, Conf) {
 
 	var GIPHY_API_KEY = "12ss5TcLvRjUze",
-		randomGIF = $resource('http://api.giphy.com/v1/gifs/random', { api_key: GIPHY_API_KEY });
+		randomGIF = $resource('https://api.giphy.com/v1/gifs/random', { api_key: GIPHY_API_KEY });
 
 	var isShown = false,
 		hideCbs = [],

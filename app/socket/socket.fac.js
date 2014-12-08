@@ -1,7 +1,8 @@
 angular.module('JenkinsDashboard')
 .factory('Socket', function($rootScope, Conf, $timeout) {
 
-	var s = io.connect("ws://" + Conf.val.address);
+	var proto = window.location.protocol === "http:" ? "ws://" : "wss://",
+		s = io.connect(proto + Conf.val.address);
 
 	return {
 		on: function(ev, cb) {
