@@ -18,3 +18,8 @@ deploy:
     run: "scripts/run_jenkinsdashboard.sh"
     port: "8000"
 generated_by: igor 2.0.16-YOLOJENKINS
+arch:
+  app: 
+    provider: "aws"
+    deploy:
+      - app
