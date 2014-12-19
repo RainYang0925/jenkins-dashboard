@@ -169,6 +169,7 @@ angular.module("JenkinsDashboard")
 		}
 
 		clearJobsTimeouts();
+		$scope.somethingBroken = false;
 		var somethingBuilding = false;
 		for (var j in res.jobs) {
 
