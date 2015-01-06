@@ -2,7 +2,7 @@ angular.module('JenkinsDashboard')
 .factory('Conf', function($rootScope, $modal, $route, $routeParams, $location) {
 
 	var defaults = {
-		address: "localhost:4001",
+		address: "jd.prezi.com:4000",
 		timeout: 2,
 		rotation: 20,
 		useScreenSaver: true,
