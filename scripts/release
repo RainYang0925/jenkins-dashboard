@@ -14,7 +14,7 @@ VENV_DIR=$($mktemp -d ./virtualenv.XXXX)
 virtualenv ${VENV_DIR}
 . ${VENV_DIR}/bin/activate
 curl -ssL http://href.prezi.com/snakebasket | sh
-sb install -e git+git@github.com:prezi/placement-client.git@master#egg=prezi-placement-client
+sb install --prefer-pinned-revision -e git+git@github.com:prezi/placement-client.git@master#egg=prezi-placement-client
 
 ${VENV_DIR}/src/prezi-placement-client/placement.py\
   -n fake-node --hosts ${ZK_HOSTS} \
