@@ -308,7 +308,7 @@ angular.module("JenkinsDashboard")
 
 	function fixCulpritName(culprit) {
 		var result = culprit
-		for(k in culpritPronunciationTable){
+		for(var k in culpritPronunciationTable){
 			result = result.replace(k, culpritPronunciationTable[k])
 		}
 		return result;
