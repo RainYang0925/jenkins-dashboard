@@ -293,16 +293,25 @@ angular.module("JenkinsDashboard")
 		return message.replace(/{JOBNAME}/g, jobName).replace(/{CULPRIT}/g, culprit);
 	}
 
+	var culpritPronunciationTable = {
+		"Matyas Barsi": "Matjas Barshi",
+		"rosadam": "Roz",
+		"OmarEl-Mohandes": "Omar El Mohande s",
+		"khaled sami": "khaleds ami",
+		"Adam Peresztegi": "Adam Pereste ghee",
+		"simone fonda": "simohneh fonda",
+		"Peter Sipos": "Peter Sheepposh",
+		"david nemeth csoka": "dahvid nemeth tschoka",
+		"Lorant Pinter": "Lorant Peen ther",
+		"Dzso Pengo": "Joe Pengeh"
+	}
+
 	function fixCulpritName(culprit) {
-		return culprit
-			.replace("Dzso Pengo", "Joe Pengeh")
-			.replace("Matyas Barsi", "Matjas Barshi")
-			.replace("rosadam", "Roz")
-			.replace("OmarEl-Mohandes", "Omar El Mohande s")
-			.replace("khaled sami", "khaleds ami")
-			.replace("Adam Peresztegi", "Adam Pereste ghee")
-			.replace("simone fonda", "simohneh fonda")
-		;
+		var result = culprit
+		for(k in culpritPronunciationTable){
+			result = result.replace(k, culpritPronunciationTable[k])
+		}
+		return result;
 	}
 
 	function speakUp(jobName) {
