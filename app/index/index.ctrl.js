@@ -280,7 +280,7 @@ angular.module("JenkinsDashboard")
 
 
 	var messageTemplatesCulprit = [
-		"Hey, guys, {CULPRIT} just broke {JOBNAME}.. yayyy",
+		"Hey, guys, {CULPRIT} just broke {JOBNAME}.. yay",
 		"Ladies and gentleman, {JOBNAME} is broken. Say thanks to {CULPRIT}",
 		"{JOBNAME} is broken. Maybe {CULPRIT} knows something about it?",
 		"{JOBNAME} is RED. Let's blame {CULPRIT}",
@@ -293,11 +293,23 @@ angular.module("JenkinsDashboard")
 		return message.replace(/{JOBNAME}/g, jobName).replace(/{CULPRIT}/g, culprit);
 	}
 
+	function fixCulpritName(culprit) {
+		return culprit
+			.replace("Dzso Pengo", "Joe Pengeh")
+			.replace("Matyas Barsi", "Matjas Barshi")
+			.replace("rosadam", "Roz")
+			.replace("OmarEl-Mohandes", "Omar El Mohande s")
+			.replace("khaled sami", "khaleds ami")
+			.replace("Adam Peresztegi", "Adam Pereste ghee")
+			.replace("simone fonda", "simohneh fonda")
+		;
+	}
+
 	function speakUp(jobName) {
 		var job = Jobs.job(jobName),
 			culprit = job.culprit || "someone";
 
-		Voice.speak(createMessage(job.name, culprit));
+		Voice.speak(createMessage(job.name, fixCulpritName(culprit)));
 	}
 
 	var $ts = function() {
