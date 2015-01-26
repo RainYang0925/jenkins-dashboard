@@ -1,11 +1,12 @@
 angular.module('JenkinsDashboard')
 .controller('confButtonCtrl', function($rootScope, $scope, $modal, ScreenSaver, Conf, Socket) {
 
-	var modal = $modal({ 
-		scope: $scope, 
-		template: 'confPanel/modal.tmpl.html', 
+	var modal = $modal({
+		scope: $scope,
+		template: 'confPanel/modal.tmpl.html',
 		placement: 'center',
-		show: false });
+		show: false
+	});
 
 	$rootScope.$on('show-conf', function() {
 		$scope.showModal();
@@ -27,6 +28,5 @@ angular.module('JenkinsDashboard')
 			$scope.data.views.push(views[i].name);
 		}
 	});
-
 
 });

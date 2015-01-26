@@ -11,7 +11,20 @@ angular.module('JenkinsDashboard')
 		viewName: "Boxfish-editor",
 		filter: "",
 		useSpeechSynthesis: true,
-		isSpeechSynthesisSupported: false
+		useVisualAlerts: true,
+		isSpeechSynthesisSupported: false,
+		voiceTemplates: {
+			brokenBuild: [
+				"Hey, guys, {#2} just broke {#1}.. yayyy",
+				"Hey {#2}, better check {#1} out!",
+				"Looks like {#2} broke {#1}, what now?",
+				"Ladies and gentleman, {#1} is broken. Say thanks to {#2}",
+				"{#1} is broken. Maybe {#2} knows something about it?",
+				"{#1} is RED. Let's blame {#2}",
+				"Houston, we have a problem with {#1}, shall we ask {#2}?"
+			],
+			lunch: ["Lunch?", "Lunch", "Lunch!", "Hungry anyone?", "Food? Food. Food!"]
+		}
 	};
 
 	var firstRouteChange = false;

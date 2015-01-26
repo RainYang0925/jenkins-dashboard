@@ -1,0 +1,65 @@
+<div class="form-group">
+	<label>Server address</label>
+
+	<div class="input-group">
+		<input 
+			name="address"
+			class="form-control" 
+			placeholder="Server address, like localhost:4000 or something" 
+			ng-model="conf.address">
+
+		<span class="input-group-btn">
+			<button 
+				ng-click="reload()" 
+				ng-disabled="form.address.$pristine"
+				class="btn btn-warning" 
+				type="button"> Reload </button>
+
+		</span>
+	</div>
+</div>
+
+<div class="form-group">
+	<label>View</label>
+	<div class="input-group">
+		<span class="input-group-addon" bs-tooltip="data.viewsNumberTooltip" data-container="body">
+			<i class="loading-viewname glyphicon glyphicon-refresh" ng-if="data.views.length == 0"></i>
+			{{ data.views.length || ''}}
+		</span>
+		<input 
+			name="viewname"
+			type="text" 
+			class="form-control viewname" 
+			ng-model="temp.inputViewName" 
+			ng-options="view for view in data.views" 
+			bs-typeahead>
+		<span class="input-group-btn">
+			<button 
+				class="btn btn-warning" 
+				ng-disabled="form.viewname.$pristine"
+				ng-click="saveViewName()"> load </button>
+		</span>
+	</div>
+</div>
+
+<div class="select-order form-group">
+	<label> Order </label>
+	<div class="btn-group btn-group-justified" ng-model="conf.sortBy" bs-radio-group>
+		<label class="btn btn-default" bs-tooltip="'By name'" data-container="body">
+			<input type="radio" class="btn btn-default" value="name">
+			<span class="label label-default"><i class="glyphicon glyphicon-sort-by-alphabet"></i></span>
+		</label>
+		<label class="btn btn-default" bs-tooltip="'Broken &gt; Running &gt; By Name'" data-container="body">
+			<input type="radio" class="btn btn-default" value="broken"> 
+			<span class="label label-danger"><i class="glyphicon glyphicon-thumbs-down"></i></span>
+			<span class="label label-info"><i class="glyphicon glyphicon-refresh"></i></span>
+			<span class="label label-success"><i class="glyphicon glyphicon-sort-by-alphabet"></i></span>
+		</label>
+		<label class="btn btn-default" bs-tooltip="'Running &gt; Broken &gt; By Name'" data-container="body">
+			<input type="radio" class="btn btn-default" value="running"> 
+			<span class="label label-info"><i class="glyphicon glyphicon-refresh"></i></span>
+			<span class="label label-danger"><i class="glyphicon glyphicon-thumbs-down"></i></span>
+			<span class="label label-success"><i class="glyphicon glyphicon-sort-by-alphabet"></i></span>
+		</label>
+	</div>
+</div>

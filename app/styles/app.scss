@@ -9,14 +9,12 @@ $header-height: 6 * $base-margin;
 
 .fixed {
 	position: fixed;
-	top: $base-margin;
-	left: $base-margin;
-	bottom: $base-margin;
-	right: $base-margin;
-}
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
 
-.socket-monitor {
-	background: rgba(0,0,0, 0.75);
+	background: rgba(0, 0, 0, 0.5);
 	display: flex;
 	display: -webkit-flex;
 	align-items: center;
@@ -25,13 +23,29 @@ $header-height: 6 * $base-margin;
 	-webkit-justify-content: center;
 	z-index: 999;
 
+}
+
+
+body.jd-modal .blur,
+body.modal-open .blur {
+	-webkit-filter: blur(10px);
+}
+.blur {
+	transition: -webkit-filter 0.66s ease-out;
+	-webkit-filter: blur(0px);
+}
+
+.away {
+	pointer-events: none;
+	opacity: 0;
+}
+
+.socket-monitor {
 	&.connected .message {
 		color: $green;
-		box-shadow: 0px 0px 200px $green;
 	}
 	&.reconnecting .message {
 		color: $red;
-		box-shadow: 0px 0px 200px $red;
 	}
 	.message {
 		border-radius: 2px;
@@ -40,21 +54,27 @@ $header-height: 6 * $base-margin;
 	}
 
 	transition: opacity 0.3s ease-in;
-	&.away {
-		pointer-events: none;
-		opacity: 0;
-	}
+}
+
+
+.visual-alert {
+	font-size: 5em;
+	font-weight: 900;
+	padding: 0em 2em;
+	color: white;
+	text-shadow: 2px 2px 4px #000;
 }
 
 .screen-saver {
-	z-index: 998;
 	background: rgba(0,0,0, 0.75);
+
+	z-index: 998;
 	overflow: hidden;
 	display: flex;
 	align-items: center;
 	-webkit-align-items: center;
 	justify-content: center;
-	transition: opacity 0.2s ease-in;
+	transition: opacity 0.3s ease-in;
 
 	img.gif {
 		width: 100%; 
@@ -69,10 +89,6 @@ $header-height: 6 * $base-margin;
 		height: 30px;
 		border: 1px solid white;
 		background: url(img/Giphy_API_Logo_ForWhite.gif);
-	}
-	&.away {
-		pointer-events: none;
-		opacity: 0;
 	}
 }
 
@@ -143,6 +159,11 @@ body {
 	}
 }
 
+.conf-modal {
+	ul.nav.nav-tabs { display: none; }
+
+	.alerts-sentences .input-group { margin-bottom: $base-margin/2; }
+}
 
 .job-item {
 	position: relative;
@@ -164,6 +185,9 @@ body {
 		overflow: hidden;
 		.job-content {
 			width: 2000px;
+		}
+		a {
+			color: white;
 		}
 	}
 

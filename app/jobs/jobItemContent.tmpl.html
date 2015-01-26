@@ -21,6 +21,8 @@
 
 	<span>{{ job.culprit }}</span>
 	<span>
-		{{ job.message }}
+		<a target="_blank" href="{{job.lastBuildURL}}">
+			{{ job.message }}
+		</a>
 	</span>
 </div>

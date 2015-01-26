@@ -1,13 +1,13 @@
 angular.module("JenkinsDashboard")
-.controller("IndexCtrl", function($scope, $interval, $timeout, $alert, Jobs, Socket, ScreenSaver, Conf, Voice) {
+.controller("IndexCtrl", function($rootScope, $scope, $interval, $timeout, $alert, Jobs, Socket, ScreenSaver, Conf, Voice) {
 
 	var VIEW_REFRESH_MS = 9000,
-		BUILD_FAST_REFRESH_MS = 2000,
-		disconnected = true;
+		BUILD_FAST_REFRESH_MS = 2000;
 
 	$scope.pageTitle = "Jenkins dashboard";
 	$scope.conf = Conf.val;
 	$scope.somethingBroken = false;
+	$scope.disconnected = true;
 
 	$scope.Jobs = Jobs;
 	$scope.$watch('conf.order', Jobs.sort);
@@ -28,14 +28,21 @@ angular.module("JenkinsDashboard")
 		requestUpdateView();
 	}
 
+	$scope.blur = true;
+	$rootScope.$on('blur', function() {
+		$scope.blur = true;
+	});
+	$rootScope.$on('unblur', function() {
+		$scope.blur = false;
+	});
 
 	Socket.on("connect", function() {
-		disconnected = false;
+		$scope.disconnected = false;
 		startPollingView();
 	});
 
 	Socket.on("disconnect", function() {
-		disconnected = true;
+		$scope.disconnected = true;
 		console.log($ts(), '!!! Disconnected, clearing all timeouts');
 		clearJobsTimeouts();
 		clearJobQueue()
@@ -86,19 +93,19 @@ angular.module("JenkinsDashboard")
 	}
 
 	function requestUpdateView() {
-		if (disconnected) { console.log($ts(), '!! Disconnected !!'); return; }
+		if ($scope.disconnected) { console.log($ts(), '!! Disconnected !!'); return; }
 		Socket.emit("j update-view", Conf.val.viewName);
 		$scope.stats.views.r++;
 	}
 
 	function requestUpdateJob(jobName) {
-		if (disconnected) { console.log($ts(), '!! Disconnected !!'); return; }
+		if ($scope.disconnected) { console.log($ts(), '!! Disconnected !!'); return; }
 		Socket.emit("j update-job", jobName);
 		$scope.stats.jobs.r++;
 	}
 
 	function requestUpdateJobFast(jobName) {
-		if (disconnected) { console.log($ts(), '!! Disconnected !!'); return; }
+		if ($scope.disconnected) { console.log($ts(), '!! Disconnected !!'); return; }
 
 		Socket.emit("j update-job-fast", jobName);
 		$scope.stats.jobs.r++;
@@ -106,7 +113,7 @@ angular.module("JenkinsDashboard")
 	}
 
 	function requestUpdateBuild(jobName, buildNumber) {
-		if (disconnected) { console.log($ts(),'!! Disconnected !!'); return; }
+		if ($scope.disconnected) { console.log($ts(),'!! Disconnected !!'); return; }
 		Socket.emit("j update-build", {jobName: jobName, buildNumber: buildNumber});
 		$scope.stats.builds.r++;
 	}
@@ -114,7 +121,7 @@ angular.module("JenkinsDashboard")
 	var buildingJobs = {},
 		updateFastTimers = {};
 	function requestUpdateBuildFast(jobName, buildNumber) {
-		if (disconnected) { console.log($ts(),'!! Disconnected !!'); return; }
+		if ($scope.disconnected) { console.log($ts(),'!! Disconnected !!'); return; }
 
 		// console.log($ts(),'## Update job fast ', jobName, buildNumber);
 		Socket.emit("j update-build-fast", {jobName: jobName, buildNumber: buildNumber});
@@ -159,6 +166,28 @@ angular.module("JenkinsDashboard")
 		$scope.stats.jobsQueue.len = jobQueue.length;
 	}
 
+	function checkIfLunch() {
+		var from = [12, 30],
+			to = [13, 30],
+			prob = 2;
+
+		var d = new Date(),
+			_from = new Date(),
+			_to = new Date();
+
+		_from.setHours(from[0]);
+		_from.setMinutes(from[1]);
+		_to.setHours(to[0]);
+		_to.setMinutes(to[1]);
+
+		if (d > _from && d < _to) {
+			if (Math.random()*1000|0 <= prob) {
+				Voice.announceLunch();
+			}
+		}
+	}
+
+	window.check = checkIfLunch;
 
 	Socket.on("j update-view", function(res, view) {
 		$scope.stats.views.a++;
@@ -200,6 +229,7 @@ angular.module("JenkinsDashboard")
 		}
 
 		deQueueJobs();
+		checkIfLunch();
 
 		// console.log($ts(), 'View updated ', $scope.conf.viewName);
 	});
@@ -243,7 +273,7 @@ angular.module("JenkinsDashboard")
 			buildingJobs[job.name] = false;
 
 			if (currentJob.isBroken())
-				speakUp(job.name);
+				announceBrokenBuild(job.name);
 
 		} else if (job.lastBuild && job.lastBuild.number) {
 			requestUpdateBuild(job.name, job.lastBuild.number);
@@ -259,7 +289,6 @@ angular.module("JenkinsDashboard")
 		if (!Jobs.existsJob(jobName)) {
 			return;
 		}
-
 
 		// Job just finished to build!
 		if (build.building === false && buildingJobs[jobName]) {
@@ -277,48 +306,10 @@ angular.module("JenkinsDashboard")
 		// console.log($ts(),'Build updated', jobName, build.number);
 	});
 
-
-
-	var messageTemplatesCulprit = [
-		"Hey, guys, {CULPRIT} just broke {JOBNAME}.. yay",
-		"Ladies and gentleman, {JOBNAME} is broken. Say thanks to {CULPRIT}",
-		"{JOBNAME} is broken. Maybe {CULPRIT} knows something about it?",
-		"{JOBNAME} is RED. Let's blame {CULPRIT}",
-		"Houston, we have a problem with {JOBNAME}, shall we ask {CULPRIT}?"
-	];
-
-	function createMessage(jobName, culprit) {
-		var n = Math.random() * messageTemplatesCulprit.length | 0,
-			message = messageTemplatesCulprit[n];
-		return message.replace(/{JOBNAME}/g, jobName).replace(/{CULPRIT}/g, culprit);
-	}
-
-	var culpritPronunciationTable = {
-		"Matyas Barsi": "Matjas Barshi",
-		"rosadam": "Roz",
-		"OmarEl-Mohandes": "Omar El Mohande s",
-		"khaled sami": "khaleds ami",
-		"Adam Peresztegi": "Adam Pereste ghee",
-		"simone fonda": "simohneh fonda",
-		"Peter Sipos": "Peter Sheepposh",
-		"david nemeth csoka": "dahvid nemeth tschoka",
-		"Lorant Pinter": "Lorant Peen ther",
-		"Dzso Pengo": "Joe Pengeh"
-	}
-
-	function fixCulpritName(culprit) {
-		var result = culprit
-		for(var k in culpritPronunciationTable){
-			result = result.replace(k, culpritPronunciationTable[k])
-		}
-		return result;
-	}
-
-	function speakUp(jobName) {
+	function announceBrokenBuild(jobName) {
 		var job = Jobs.job(jobName),
 			culprit = job.culprit || "someone";
-
-		Voice.speak(createMessage(job.name, fixCulpritName(culprit)));
+		Voice.announceBrokenBuild(job.name, culprit);
 	}
 
 	var $ts = function() {

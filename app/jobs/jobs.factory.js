@@ -8,6 +8,7 @@ angular.module('JenkinsDashboard')
 		this.color = color;
 		this.details = null;
 		this.build = null;
+		this.lastBuildURL = null;
 		this.message = "";
 		this.culprit = "";
 		this.timeLeft = '';
@@ -34,7 +35,7 @@ angular.module('JenkinsDashboard')
 
 		this.details = details;
 		this.color = details.color;
-		
+
 		if (this.details !== oldDetails || this.color !== oldColor) {
 			this.updateOrderValues();
 			sortJobs();
@@ -43,6 +44,7 @@ angular.module('JenkinsDashboard')
 	}
 	Job.prototype.setBuild = function(b) { 
 		this.build = b;
+		this.lastBuildURL = ('url' in b) ? b.url + "console" : null;
 		return this.setCulprit().setMessage().setTimeLeftAndCompletionPercentage();
 	}
 	Job.prototype.updateOrderValues = function() {

@@ -8,14 +8,15 @@
 		<!-- inject:app-style:css --><!-- endinject -->
 		<!-- inject:assets:css --><!-- endinject -->
 	</head>
-	<body ng-class="{ 'broken': somethingBroken, 'ok': !somethingBroken }">
+	<body ng-class="{ 'broken': somethingBroken, 'ok': !somethingBroken, 'jd-modal': blur }">
 
+		<visual-alert></visual-alert>
 		<socket-monitor></socket-monitor>
 		<screen-saver></screen-saver>
 
-		<header ng-include="'index/header.tmpl.html'"></header>
+		<header class="blur" ng-include="'index/header.tmpl.html'"></header>
 
-		<div class="jobs-container">
+		<div class="jobs-container blur">
 			<job-item ng-repeat="job in Jobs.sortedJobs()" job="job"></job-item>
 		</div>
 
