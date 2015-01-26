@@ -181,7 +181,8 @@ angular.module("JenkinsDashboard")
 		_to.setMinutes(to[1]);
 
 		if (d > _from && d < _to) {
-			if (Math.random()*1000|0 <= prob) {
+			var rand = Math.random()*1000|0;
+			if (rand <= prob) {
 				Voice.announceLunch();
 			}
 		}
