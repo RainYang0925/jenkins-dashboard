@@ -198,7 +198,9 @@ angular.module('JenkinsDashboard')
 
 		// Proper culprits, set the full name
 		if (this.build.culprits[0]) {
-			this.culprit = this.build.culprits[0].fullName.replace(/\./g, ' ');
+			// For some reason culprits and commits are in different order................
+			var last = this.build.culprits.length - 1;
+			this.culprit = this.build.culprits[last].fullName.replace(/\./g, ' ');
 			return this;
 		} 
 
