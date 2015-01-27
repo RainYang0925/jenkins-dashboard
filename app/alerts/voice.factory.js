@@ -1,14 +1,14 @@
 angular.module('JenkinsDashboard')
 .factory('Voice', function(Conf, $rootScope) {
-
+	// Omar El Mohande s
 	var culpritPronunciationTable = {
 		"Matyas Barsi": "Matjas Barshi",
 		"rosadam": "Roz",
-		"OmarEl-Mohandes": "Omar El Mohande s",
+		"OmarEl-Mohandes": "omar dee ninja",
 		"khaled sami": "khaleds ami",
-		"Adam Peresztegi": "Adam Pereste ghee",
+		"Adam Peresztegi": "flash",
 		"simone fonda": "simohneh fonda",
-		"Peter Sipos": "Peter Sheepposh",
+		"Peter Sipos": "sheepee",
 		"david nemeth csoka": "dahvid nemeth tschoka",
 		"Lorant Pinter": "Lorant Peen ther",
 		"Dzso Pengo": "Joe Pengeh"
