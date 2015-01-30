@@ -178,6 +178,7 @@ body {
 		width: 100%;
 		background: transparent;
 		overflow: hidden;
+		white-space: nowrap;
 	}
 
 	.job-progress {
@@ -210,6 +211,8 @@ body {
 
 	span {
 		margin: 6px;
+		max-width: 100px;
+		overflow: visible;
 	}
 	.name {
 		display: inline;
