@@ -1,6 +1,6 @@
 angular.module('JenkinsDashboard')
 .factory('Voice', function(Conf, $rootScope) {
-	// Omar El Mohande s
+	
 	var culpritPronunciationTable = {
 		"Matyas Barsi": "Matjas Barshi",
 		"rosadam": "Roz",
@@ -11,7 +11,7 @@ angular.module('JenkinsDashboard')
 		"Peter Sipos": "sheepee",
 		"david nemeth csoka": "dahvid nemeth tschoka",
 		"Lorant Pinter": "Lorant Peen ther",
-		"Dzso Pengo": "Joe Pengeh"
+		"Dzso Pengo": "Joe"
 	};
 
 	function fixCulpritName(culprit) {
