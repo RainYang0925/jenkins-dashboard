@@ -2,4 +2,15 @@
 	<span class="btn btn-info conf-button" ng-click="showModal()">
 		<i class="glyphicon glyphicon-cog"></i>
 	</span>
+
+	<span ng-if="conf.useSpeechSynthesis && muted" class="btn btn-danger conf-button" ng-click="toggleMute()" 
+		bs-tooltip="'Activate voice'" data-container="body" data-placement="bottom">
+		<i class="glyphicon glyphicon-volume-off"></i>
+		{{mutedTimeLeft}}
+	</span>
+	<span ng-if="conf.useSpeechSynthesis && !muted" class="btn btn-info conf-button" ng-click="toggleMute()" 
+		bs-tooltip="'Mute for {{conf.muteForMinutes}} minutes'" data-container="body" data-placement="bottom">
+		<i class="glyphicon glyphicon-volume-up"></i>
+	</span>
+
 </span>

@@ -6,12 +6,21 @@
 		</label>
 	</div>
 </div>
+
 <div class="form-group">
 	<div class="checkbox">
 		<label>
 			<input type="checkbox" ng-model="conf.useSpeechSynthesis"> 
 			I want to hear an alert when something went wrong
 		</label>
+	</div>
+</div>
+
+
+<div class="form-horizontal" ng-if="conf.useSpeechSynthesis">
+	<div class="form-group">
+		<label class="col-sm-5 control-label">mute button (mins)</label> 
+		<div class="col-sm-5"><input type="text" class="form-control" ng-model="conf.muteForMinutes"></div>
 	</div>
 </div>
 
@@ -39,6 +48,6 @@
 
 	<div>
 		<button class="btn btn-block btn-success" ng-click="sentences.add()">Add</button>
-		<button class="btn btn-block btn-danger" ng-click="sentences.reset()">Reset to defaults</button>
+		<button class="btn btn-block btn-danger" ng-click="sentences.reset()">Reset sentences to defaults</button>
 	</div>
 </div>

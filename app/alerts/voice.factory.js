@@ -23,12 +23,11 @@ angular.module('JenkinsDashboard')
 	}
 
 	function speak(message) {
-		if (!Conf.val.isSpeechSynthesisSupported || !Conf.val.useSpeechSynthesis) return;
+		if (!Conf.val.isSpeechSynthesisSupported || !Conf.val.useSpeechSynthesis || Conf.val.muted) return;
 
 		// TODO: should we queue up the messages?
 		window.speechSynthesis.cancel();
 		window.speechSynthesis.speak(new SpeechSynthesisUtterance(message));
-		console.log('### Reading out message:', message);
 	}
 
 	function announceLunch(who) {

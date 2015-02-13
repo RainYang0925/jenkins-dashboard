@@ -5,6 +5,8 @@ angular.module('JenkinsDashboard')
 		address: "jd.prezi.com:4000",
 		timeout: 2,
 		rotation: 20,
+		muteForMinutes: 1,
+		muted: false,
 		useScreenSaver: true,
 		topic: "dog loop",
 		sortBy: "name",
@@ -91,6 +93,8 @@ angular.module('JenkinsDashboard')
 
 		if (isSpeechSynthesisSupported()) {
 			ret.isSpeechSynthesisSupported = true;
+			ret.muted = false;
+			ret.muteForMinutes = 1;
 		} else {
 			ret.isSpeechSynthesisSupported = false;
 		}

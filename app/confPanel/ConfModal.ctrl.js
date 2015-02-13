@@ -14,6 +14,7 @@ angular.module('JenkinsDashboard')
 	});
 	$scope.$watch('conf.useSpeechSynthesis', function() { Conf.save(); });
 	$scope.$watch('conf.voiceTemplates.brokenBuild', function() { Conf.save(); }, true);
+	$scope.$watch('conf.muteForMinutes', function() { Conf.save(); });
 
 	$scope.temp = {};
 	$scope.tabs = {

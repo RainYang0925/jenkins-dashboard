@@ -99,6 +99,12 @@ body.modal-open .blur {
 }
 
 body {
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+
 	&.broken { 
 		background-color: $red; 
 		.title { color: $red; }
@@ -119,14 +125,6 @@ body {
 		padding-top: 2*$base-margin;
 		width: 400px;
 		margin-right: auto;
-
-		.conf-button {
-			cursor: pointer;
-			opacity: 0.7;
-			&:hover {
-				opacity: 1;
-			}
-		}
 
 		.job-filter {
 			.job-filter-input-group {
