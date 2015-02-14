@@ -1,5 +1,5 @@
 angular.module("JenkinsDashboard")
-.controller("IndexCtrl", function($rootScope, $scope, $interval, $timeout, $alert, Jobs, Socket, ScreenSaver, Conf, Voice) {
+.controller("IndexCtrl", function($rootScope, $scope, $interval, $timeout, $alert, $window, Jobs, Socket, ScreenSaver, Conf, Voice) {
 
 	var VIEW_REFRESH_MS = 9000,
 		BUILD_FAST_REFRESH_MS = 2000;
@@ -166,6 +166,15 @@ angular.module("JenkinsDashboard")
 		$scope.stats.jobsQueue.len = jobQueue.length;
 	}
 
+	// Poor man's autoupdate: reload the page at midnight, so any dashboard around
+	// will just use the newest version every morning
+	var lastDayNumber = (new Date()).getDay();
+	function checkIfReload() {
+		if ((new Date()).getDay() !== lastDayNumber) {
+			$window.location.reload();
+		}
+	}
+
 	function checkIfLunch() {
 		var from = [12, 30],
 			to = [13, 30],
@@ -231,6 +240,7 @@ angular.module("JenkinsDashboard")
 
 		deQueueJobs();
 		checkIfLunch();
+		checkIfReload();
 
 		// console.log($ts(), 'View updated ', $scope.conf.viewName);
 	});

@@ -36,22 +36,22 @@ angular.module('JenkinsDashboard')
 	}
 
 	function startTimer() {
-		if (!screenSaverTimeout && Conf.val.useScreenSaver) {
+		if (!screenSaverTimeout && (Conf.val.useScreenSaver || Conf.val.useFixedScreenSaver)) {
 			screenSaverTimeout = $timeout(show, (parseFloat(Conf.val.timeout) || Conf.defaults.timeout) * 60 * 1000);
 		}
 	}
 
 	function startRotationTimer() {
 		var rotation = parseFloat(Conf.val.rotation);
+
+		$timeout.cancel(screenSaverChangeTimeout)
+		screenSaverChangeTimeout = null;
+
 		if (rotation === 0) {
-			$timeout.cancel(screenSaverChangeTimeout)
-			screenSaverChangeTimeout = null;
 			console.log('No rotation, resetting the change timer');
 			return;
 		}
 
-		$timeout.cancel(screenSaverChangeTimeout)
-		screenSaverChangeTimeout = null;
 		screenSaverChangeTimeout = $timeout(changeScreenSaver, (rotation || Conf.defaults.rotation) * 60 * 1000);
 	}
 
@@ -68,7 +68,10 @@ angular.module('JenkinsDashboard')
 			startRotationTimer();
 		}
 	}
-	changeScreenSaver();
+
+	if (Conf.val.useScreenSaver) {
+		changeScreenSaver();
+	}
 
 	return {
 		startTimer: startTimer,
@@ -77,7 +80,13 @@ angular.module('JenkinsDashboard')
 		onHide: function(f) { hideCbs.push(f); },
 		onShow: function(f) { showCbs.push(f); },
 		onChangeImage: function(f) { changeImageCbs.push(f); },
-		getImg: function() { return currentScreenSaver; }
+		getImg: function() {
+			if (Conf.val.useFixedScreenSaver) {
+				return Conf.val.fixedScreenSaver;
+			}
+			return currentScreenSaver; 
+		},
+		changeScreenSaver: changeScreenSaver
 	};
 
 });

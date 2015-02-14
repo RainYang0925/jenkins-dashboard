@@ -3,7 +3,23 @@ angular.module('JenkinsDashboard')
 
 	$scope.conf = Conf.val;
 
-	$scope.$watch('conf.useScreenSaver', function() { Conf.save(); ScreenSaver.hide(); });
+	$scope.$watch('conf.useScreenSaver', function(newVal, oldVal) {
+		if (newVal === true) {
+			Conf.val.useFixedScreenSaver = false;
+			ScreenSaver.changeScreenSaver();
+		}
+		Conf.save(); 
+		ScreenSaver.hide();
+	});
+
+	$scope.$watch('conf.useFixedScreenSaver', function(newVal, oldVal) { 
+		if (newVal === true) {
+			Conf.val.useScreenSaver = false;
+		}
+		Conf.save(); 
+		ScreenSaver.hide();
+	});
+
 	$scope.$watch('conf.timeout', function() { Conf.save(); ScreenSaver.hide(); });
 	$scope.$watch('conf.rotation', function(v) { Conf.save(); });
 	$scope.$watch('conf.topic', function(v) { Conf.save(); });
@@ -15,6 +31,7 @@ angular.module('JenkinsDashboard')
 	$scope.$watch('conf.useSpeechSynthesis', function() { Conf.save(); });
 	$scope.$watch('conf.voiceTemplates.brokenBuild', function() { Conf.save(); }, true);
 	$scope.$watch('conf.muteForMinutes', function() { Conf.save(); });
+	$scope.$watch('conf.fixedScreenSaver', function() { Conf.save(); });
 
 	$scope.temp = {};
 	$scope.tabs = {

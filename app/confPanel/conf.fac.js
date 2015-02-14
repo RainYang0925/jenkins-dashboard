@@ -3,18 +3,27 @@ angular.module('JenkinsDashboard')
 
 	var defaults = {
 		address: "jd.prezi.com:4000",
+
+		// These two are mutually exclusive
+		useScreenSaver: true, 
+		useFixedScreenSaver: false,
+
 		timeout: 2,
 		rotation: 20,
-		muteForMinutes: 1,
-		muted: false,
-		useScreenSaver: true,
+
+		fixedScreenSaver: "http://media.giphy.com/media/2FMZ918Q5JX8Y/giphy.gif",
 		topic: "dog loop",
+
 		sortBy: "name",
 		viewName: "Boxfish-editor",
 		filter: "",
+
 		useSpeechSynthesis: true,
 		useVisualAlerts: true,
 		isSpeechSynthesisSupported: false,
+		muteForMinutes: 20,
+		muted: false,
+
 		voiceTemplates: {
 			brokenBuild: [
 				"Hey, guys, {#2} just broke {#1}.. yayyy",
@@ -94,7 +103,6 @@ angular.module('JenkinsDashboard')
 		if (isSpeechSynthesisSupported()) {
 			ret.isSpeechSynthesisSupported = true;
 			ret.muted = false;
-			ret.muteForMinutes = 1;
 		} else {
 			ret.isSpeechSynthesisSupported = false;
 		}
