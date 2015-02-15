@@ -17,7 +17,9 @@ angular.module('JenkinsDashboard')
 		for (var l = showCbs.length; l--;)
 			showCbs[l].call();
 
-		startRotationTimer();
+		if (Conf.val.useScreenSaver) {
+			startRotationTimer();
+		}
 	}
 
 	function hide() {
