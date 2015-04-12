@@ -8,7 +8,7 @@ var Q = require('q'),
 module.exports = jh;
 
 // If a jenkins request does not reply under this time (and we are queueing them up), force a refresh
-var FORCE_REFRESH_MS = 2 * 60 * 1000;
+var FORCE_REFRESH_MS = 20 * 1000;
 
 jh.cache = new NodeCache({ stdTTL: 120 });
 jh.debug = false;
@@ -24,7 +24,7 @@ jh.log = log = function() {
 	var pad = function(n) { return ('0' + n).slice(-2); },
 		date = new Date(),
 		dateString = pad(date.getHours()) +':'+ pad(date.getMinutes()) +':'+ pad(date.getSeconds());
-	console.log.apply(this, ['###', dateString].concat(Array.prototype.slice.apply(arguments)));
+	console.log.apply(this, [dateString].concat(Array.prototype.slice.apply(arguments)));
 }
 
 jh.get = function(path) {
@@ -34,7 +34,8 @@ jh.get = function(path) {
 			host: 'jenkins.prezi.com',
 			secureProtocol: 'SSLv3_method',
 			path: (path).replace(/\s/g,"%20"),
-			headers: { 'Authorization': this.authBase64 }
+			headers: { 'Authorization': this.authBase64 },
+			timeout: FORCE_REFRESH_MS
 		};
 
 
@@ -94,29 +95,52 @@ jh.get = function(path) {
 	}
 
 
-	log('### Fetching from jenkins: ' + path);
+	log('# https req ' + path);
+	var timeStart = (new Date()).getTime();
 	var req = https.get(options, function(res) {
+		var duration = (new Date()).getTime() - timeStart;
+		log("# https resp " + duration + "ms " + res.statusCode + " " + path);
+
+		if (res.statusCode === 401) {
+			console.log(separator, 'Got a 401 from jenkins, check your credentials', separator);
+		}
+
+		res.on("data", function(body) {
+			if (res.statusCode === 200) {
+				results += body.toString();
+			}
+		});
+		res.on("end", function() {
+			if (res.statusCode === 200) {
+				def.resolve(results);
+			} else {
+				log("@@@ Error: jenkins replied with status code: "+ res.statusCode);
+				def.reject();
+			}
+		});
+
+		/*
 		if (res.statusCode === 401) {
 			console.log(separator, 'Got a 401 from jenkins, check your credentials', separator);
 		} else if (res.statusCode === 200) {
 			res.on("data", function(body) {
 				results += body.toString();
 			});
-			res.on("end", function() {
-				def.resolve(results);
-			});
 		} else {
 			log("@@@ Error: jenkins replied with status code: "+ res.statusCode);
 			def.reject();
 		}
+		*/
 	});
-
-	req.end();
 
 	req.on("error", function(e) {
 		log("@@@ Error: Https.get: " + e.message);
+		var duration = (new Date()).getTime() - timeStart;
+		log("# https error " + duration + "ms " + path + " " + e);
 		def.reject(e);
 	});
+
+	req.end();
 
 	return def.promise;
 }
@@ -167,11 +191,11 @@ function cachedApi(pathConstructor, ttl, force) {
 
 		// If we are waiting for this call for more than FORCE_REFRESH_MS, just do the call again
 		if (isRequesting[path] && path in firstQueuedPromiseForPath && timeNow - firstQueuedPromiseForPath[path] > FORCE_REFRESH_MS) {
+			log('!!!!!! Resetting ' + path, timeNow - firstQueuedPromiseForPath[path]);
 			isRequesting[path] = false;
 			delete queuedPromisesForPath[path];
 			delete firstQueuedPromiseForPath[path];
 			delete queuedIdsForPath[path];
-			log('!!!!!! Resetting ' + path, timeNow - firstQueuedPromiseForPath[path]);
 		}
 
 		if ((path in cached)) {
@@ -180,11 +204,11 @@ function cachedApi(pathConstructor, ttl, force) {
 		} else if (isRequesting[path]) {
 
 			if (id in queuedIdsForPath[path]) {
-				log('!! Skipping queue for', path, id);
+				log('+++ Skipping queue for', path, id);
 			} else {
 				queuedPromisesForPath[path].push(def);
 				queuedIdsForPath[path][id] = true;
-				log('!! Queued '+ queuedPromisesForPath[path].length, path, timeNow - firstQueuedPromiseForPath[path], id);
+				log('+++ Queued '+ queuedPromisesForPath[path].length, path, timeNow - firstQueuedPromiseForPath[path], id);
 			}
 
 		} else {
@@ -193,7 +217,6 @@ function cachedApi(pathConstructor, ttl, force) {
 			firstQueuedPromiseForPath[path] = timeNow;
 			queuedIdsForPath[path] = {};
 			queuedIdsForPath[path][id] = true;
-			// log('!! Queued '+ queuedPromisesForPath[path].length, path, timeNow - firstQueuedPromiseForPath[path], id);
 
 			isRequesting[path] = true;
 			jh.get(path).then(function(data) {
