@@ -5,6 +5,8 @@ var Q = require('q'),
 	separator = "\n###############################################################\n",
 	fixtures = require('./fixtures');
 
+https.globalAgent.maxSockets = Infinity;
+
 module.exports = jh;
 
 // If a jenkins request does not reply under this time (and we are queueing them up), force a refresh
