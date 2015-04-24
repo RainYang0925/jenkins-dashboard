@@ -45,7 +45,7 @@ angular.module('JenkinsDashboard')
 	Job.prototype.setBuild = function(b) { 
 		this.build = b;
 		this.lastBuildURL = ('url' in b) ? b.url + "console" : null;
-		return this.setCulprit().setMessage().setTimeLeftAndCompletionPercentage();
+		return this.setMessage().setCulprit().setTimeLeftAndCompletionPercentage();
 	}
 	Job.prototype.updateOrderValues = function() {
 		this.ord = {
@@ -220,14 +220,63 @@ angular.module('JenkinsDashboard')
 
 		return this;
 	}
+
+	Job.prototype.extractCulpritsFromMessage = function(message) {
+		var p,
+			delimiter = "====JSON====",
+			i,
+			j,
+			userList = "",
+			moduleList = "",
+			name,
+			moduleName;
+		if ((p = message.indexOf(delimiter)) > -1) {
+			try {
+				var meta = JSON.parse(message.substr(p + delimiter.length).trim());
+				for (i=0;i<meta.length;i++) {
+					if (meta[i].users) {
+						for (j=0;j<meta[i].users.length;j++) {
+							if (name = meta[i].users[j]) {
+								this.build.culprits = (this.build.culprits || []);
+								this.build.culprits.push({fullName: name});
+								userList += (userList ? ",":"") + name;
+							}
+						}				
+					}
+					if (meta[i].module) {
+						if (moduleName = meta[i].module) {
+							moduleList += (moduleList ? ",":"") + moduleName;
+						}
+					}
+				}
+				this.message = moduleList + (moduleList ? " by " + userList: this.message);
+			} catch (e) {
+				console.log("message JSON part META error", e);
+			}
+		}
+		return this;
+	}
+
 	Job.prototype.setMessage = function(message) {
 		if (typeof(message) !== "undefined") {
 			this.message = message;
 		} else if (this.build.changeSet && this.build.changeSet.items && this.build.changeSet.items.length > 0 && this.build.changeSet.items[0].msg) {
 			this.message = this.build.changeSet.items[0].msg;
 		} else {
-			// Else, let's see if there's causes
+			// Else, let's see if there's commit message as param
 			var actions = this.build.actions;
+			for (var l = actions.length; l--;) {
+				if (actions[l] && actions[l].parameters && actions[l].parameters.length > 0) {
+					for (var c = actions[l].parameters.length; c--;) {
+						if (actions[l].parameters[c].name === "GIT_COMMIT_MESSAGE" && actions[l].parameters[c].value) {
+							this.message = actions[l].parameters[c].value;
+							return this.extractCulpritsFromMessage(this.message);
+						}
+
+					}
+				}
+			}
+			// Else, let's see if there's causes
 			for (var l = actions.length; l--;) {
 				if (actions[l] && actions[l].causes && actions[l].causes.length > 0) {
 					for (var c = actions[l].causes.length; c--;) {
