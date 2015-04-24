@@ -226,8 +226,8 @@ angular.module('JenkinsDashboard')
 			delimiter = "====JSON====",
 			i,
 			j,
-			userList = "",
-			moduleList = "",
+			userList = [],
+			moduleList = [],
 			name,
 			moduleName;
 		if ((p = message.indexOf(delimiter)) > -1) {
@@ -239,17 +239,19 @@ angular.module('JenkinsDashboard')
 							if (name = meta[i].users[j]) {
 								this.build.culprits = (this.build.culprits || []);
 								this.build.culprits.push({fullName: name});
-								userList += (userList ? ",":"") + name;
+								if (userList.indexOf(name) === -1) {
+									userList.push(name);
+								}
 							}
 						}				
 					}
 					if (meta[i].module) {
-						if (moduleName = meta[i].module) {
-							moduleList += (moduleList ? ",":"") + moduleName;
+						if ((moduleName = meta[i].module) && (moduleList.indexOf(moduleName) === -1)) {
+							moduleList.push(moduleName);
 						}
 					}
 				}
-				this.message = moduleList + (moduleList ? " by " + userList: this.message);
+				this.message = moduleList.join(", ") + (moduleList.length ? " by " + userList.join(", ") : this.message);
 			} catch (e) {
 				console.log("message JSON part META error", e);
 			}
