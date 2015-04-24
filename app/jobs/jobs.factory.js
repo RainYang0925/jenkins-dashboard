@@ -258,13 +258,11 @@ angular.module('JenkinsDashboard')
 	}
 
 	Job.prototype.setMessage = function(message) {
+		var actions = this.build.actions;
 		if (typeof(message) !== "undefined") {
 			this.message = message;
-		} else if (this.build.changeSet && this.build.changeSet.items && this.build.changeSet.items.length > 0 && this.build.changeSet.items[0].msg) {
-			this.message = this.build.changeSet.items[0].msg;
 		} else {
 			// Else, let's see if there's commit message as param
-			var actions = this.build.actions;
 			for (var l = actions.length; l--;) {
 				if (actions[l] && actions[l].parameters && actions[l].parameters.length > 0) {
 					for (var c = actions[l].parameters.length; c--;) {
@@ -272,10 +270,16 @@ angular.module('JenkinsDashboard')
 							this.message = actions[l].parameters[c].value;
 							return this.extractCulpritsFromMessage(this.message);
 						}
-
 					}
 				}
 			}
+
+			// Else, check if the job has some commit information
+			if (this.build.changeSet && this.build.changeSet.items && this.build.changeSet.items.length > 0 && this.build.changeSet.items[0].msg) {
+				this.message = this.build.changeSet.items[0].msg;
+				return this;
+			}
+
 			// Else, let's see if there's causes
 			for (var l = actions.length; l--;) {
 				if (actions[l] && actions[l].causes && actions[l].causes.length > 0) {
