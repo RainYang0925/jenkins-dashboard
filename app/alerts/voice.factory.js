@@ -11,10 +11,11 @@ angular.module('JenkinsDashboard')
 		"Peter Sipos": "sheepee",
 		"david nemeth csoka": "dahvid nemeth tschoka",
 		"Lorant Pinter": "Lorant Peen ther",
-		"Dzso Pengo": "Joe"
+		"Dzso Pengo": "Joe",
+        "Viktor Nagy": "Vic"
 	};
 
-	function fixCulpritName(culprit) {
+	function fixSpokenCulpritName(culprit) {
 		var result = culprit
 		for (var k in culpritPronunciationTable) {
 			result = result.replace(k, culpritPronunciationTable[k]);
@@ -43,11 +44,14 @@ angular.module('JenkinsDashboard')
 			n = Math.random() * tmpls.length | 0,
 			message = tmpls[n]
 						.replace(/{#1}/g, jobName)
-						.replace(/{#2}/g, fixCulpritName(culprit));
+						.replace(/{#2}/g, culprit),
+            spokenMessage = tmpls[n]
+                .replace(/{#1}/g, jobName)
+                .replace(/{#2}/g, fixSpokenCulpritName(culprit));
 
 		if (Conf.val.useVisualAlerts)
 			$rootScope.$broadcast('visual-alert', message);
-		speak(message);
+		speak(spokenMessage);
 	}
 
 	return {
