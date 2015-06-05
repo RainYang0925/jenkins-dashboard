@@ -15,5 +15,8 @@ There's a server part and a client part. At the moment both are run through gulp
 
 .. and both gets rerun/refreshed if you change the sources (live reload, live development).
 
+If you want to use your local copy of the nodejs backend, you need to configure it in the frontend: 
+run gulp, open localhost:4000 in the browser, click configure (or the cogwheel in the top left part 
+of the window) and insert localhost:4001 as server address.
 
 In order to run the server, you will need that `/auth.txt` file.
