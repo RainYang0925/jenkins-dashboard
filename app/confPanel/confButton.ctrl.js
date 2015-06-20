@@ -61,6 +61,7 @@ angular.module('JenkinsDashboard')
 		for (var i = 0; i < views.length; i++) {
 			$scope.data.views.push(views[i].name);
 		}
+		$scope.$apply();
 	});
 
 });

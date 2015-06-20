@@ -1,13 +1,13 @@
-<div class="socket-monitor fixed" ng-class="{connected: connected, reconnecting: !connected, away: away}">
+<div class="socket-monitor fixed" ng-class="{connected: connected && !isLoading, reconnecting: !connected && !isLoading, away: away}">
 
-	<div class="jumbotron message" ng-if="!connected">
+	<div class="jumbotron message" ng-if="!connected && !isLoading">
 		<h1>Not connected!</h1>
 		<p>Looks like i cannot reach the server.. trying again..</p>
 		<br><br>
 		<button class="btn btn-warning btn-sm" ng-click="showConf()">Configure?</button>
 	</div>
 
-	<div class="jumbotron message" ng-if="connected">
+	<div class="jumbotron message" ng-if="connected && !isLoading">
 		<h1>Connected!</h1>
 		<p>Yay! We can get back to work.</p>
 	</div>

@@ -10,11 +10,18 @@ angular.module('JenkinsDashboard')
 	Socket.on('connect', function() {
 		$scope.connected = true;
 		$timeout.cancel(hideTimer);
+		$scope.$apply();
+
+		var hideMs = HIDE_MONITOR_MS;
+		if ($scope.isLoading) {
+			hideMs = 100;
+		}
+
 		hideTimer = $timeout(function() {
 			$rootScope.$broadcast('unblur');
 			$scope.away = true;
 			$scope.$apply();
-		}, HIDE_MONITOR_MS);
+		}, hideMs);
 	});
 
 	Socket.on('disconnect', function() {
@@ -27,5 +34,10 @@ angular.module('JenkinsDashboard')
 	$scope.showConf = function() {
 		$rootScope.$emit('show-conf');
 	}
+
+	$scope.isLoading = true;
+	$timeout(function() {
+		$scope.isLoading = false;
+	}, HIDE_MONITOR_MS*2);
 
 });
