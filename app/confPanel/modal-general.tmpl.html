@@ -31,7 +31,8 @@
 			type="text" 
 			class="form-control viewname" 
 			ng-model="temp.inputViewName" 
-			ng-options="view for view in data.views" 
+			data-watch-options="true"
+			bs-options="view for view in data.views" 
 			bs-typeahead>
 		<span class="input-group-btn">
 			<button 

@@ -110,9 +110,9 @@ gulp.task('copy libs', function() {
 
 	return gulp
 		.src([
-			'./assets/angular/angular.js', 
-			'./assets/angular-route/angular-route.js', 
-			'./assets/angular-resource/angular-resource.js', 
+			'./assets/angular/angular.min.js', 
+			'./assets/angular-route/angular-route.min.js', 
+			'./assets/angular-resource/angular-resource.min.js', 
 			'./assets/angular-strap/dist/angular-strap.min.js', 
 			'./assets/angular-strap/dist/angular-strap.tpl.min.js', 
 			'./assets/bootstrap/dist/css/bootstrap.min.css',
@@ -138,9 +138,9 @@ gulp.task('index', function() {
 		.pipe(inject('app/templates*.js', 'templates'))
 		.pipe(inject(
 			[
-				'assets/angular.js', 
-				'assets/angular-resource.js',
-				'assets/angular-route.js',
+				'assets/angular.min.js', 
+				'assets/angular-resource.min.js',
+				'assets/angular-route.min.js',
 				'assets/angular-strap.min.js',
 				'assets/angular-strap.tpl.min.js',
 				'assets/socket.io.js'
