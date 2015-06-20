@@ -34,7 +34,7 @@ angular.module('JenkinsDashboard')
 				"{#1} is RED. Let's blame {#2}",
 				"Houston, we have a problem with {#1}, shall we ask {#2}?"
 			],
-			lunch: ["Lunch?", "Lunch", "Lunch!", "Hungry anyone?", "Food? Food. Food!"]
+			lunch: ["Lunch?", "Lunch", "Lunch!", "Hungry anyone?", "Food? Ebeed? Food!"]
 		}
 	};
 

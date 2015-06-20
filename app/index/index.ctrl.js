@@ -177,7 +177,7 @@ angular.module("JenkinsDashboard")
 
 	function checkIfLunch() {
 		var from = [12, 30],
-			to = [13, 30],
+			to = [13, 0],
 			prob = 2;
 
 		var d = new Date(),
@@ -190,7 +190,7 @@ angular.module("JenkinsDashboard")
 		_to.setMinutes(to[1]);
 
 		if (d > _from && d < _to) {
-			var rand = Math.random()*1000|0;
+			var rand = Math.random()*10000|0;
 			if (rand <= prob) {
 				Voice.announceLunch();
 			}
