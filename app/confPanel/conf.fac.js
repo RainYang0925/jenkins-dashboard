@@ -35,7 +35,8 @@ angular.module('JenkinsDashboard')
 				"Houston, we have a problem with {#1}, shall we ask {#2}?"
 			],
 			lunch: ["Lunch?", "Lunch", "Lunch!", "Hungry anyone?", "Food? Ebeed? Food!"]
-		}
+		},
+		voice: "Default"
 	};
 
 	var firstRouteChange = false;

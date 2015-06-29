@@ -1,5 +1,5 @@
 angular.module('JenkinsDashboard')
-.controller('confModalCtrl', function($scope, $window, Conf, ScreenSaver, Socket) {
+.controller('confModalCtrl', function($scope, $window, Conf, ScreenSaver, Socket, Voice) {
 
 	$scope.conf = Conf.val;
 
@@ -32,6 +32,7 @@ angular.module('JenkinsDashboard')
 	$scope.$watch('conf.voiceTemplates.brokenBuild', function() { Conf.save(); }, true);
 	$scope.$watch('conf.muteForMinutes', function() { Conf.save(); });
 	$scope.$watch('conf.fixedScreenSaver', function() { Conf.save(); });
+	$scope.$watch('conf.voice', function() { Conf.save(); });
 
 	$scope.temp = {};
 	$scope.tabs = {
@@ -67,7 +68,22 @@ angular.module('JenkinsDashboard')
 			if (bbTempl[len - 1] !== '') {
 				bbTempl.push('');
 			}
+		},
+		test: function(i) {
+			Voice.speakTemplate(bbTempl[i], "boxfish", "HP");
 		}
 	}
+
+		function updateVoices() {
+			$scope.availableVoices = ["Default"].concat(Voice.getVoiceNames());
+			if ($scope.availableVoices.indexOf($scope.conf.voice) === -1) {
+				$scope.availableVoices.push($scope.conf.voice);
+			}
+		}
+
+		updateVoices();
+		Voice.onVoicesChanged(function() {
+			updateVoices();
+		});
 
 });

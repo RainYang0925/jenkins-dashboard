@@ -24,6 +24,19 @@
 	</div>
 </div>
 
+<div class="form-horizontal" ng-if="conf.useSpeechSynthesis">
+	<div class="form-group">
+		<label class="col-sm-5 control-label">voice</label>
+		<div class="col-sm-5">
+			<select class="form-control"
+					ng-model="conf.voice"
+					ng-options="option for option in availableVoices">
+
+			</select>
+		</div>
+	</div>
+</div>
+
 <div class="form-group" ng-if="conf.useSpeechSynthesis || conf.useVisualAlerts">
 
 	<label>
@@ -40,6 +53,9 @@
 			<span class="input-group-btn">
 				<button class="btn btn-danger" ng-click="sentences.remove($index)">
 					<i class="glyphicon glyphicon-remove"></i>
+				</button>
+				<button class="btn btn-info" ng-click="sentences.test($index)">
+					<i class="glyphicon glyphicon-volume-up"></i>
 				</button>
 			</span>
 		</div>
