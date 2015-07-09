@@ -8,6 +8,7 @@ angular.module("JenkinsDashboard")
 	$scope.conf = Conf.val;
 	$scope.somethingBroken = false;
 	$scope.disconnected = true;
+	$scope.lastUpdate = '';
 
 	$scope.Jobs = Jobs;
 	$scope.$watch('conf.order', Jobs.sort);
@@ -202,6 +203,8 @@ angular.module("JenkinsDashboard")
 	Socket.on("j update-view", function(res, view) {
 		$scope.stats.views.a++;
 		$scope.stats.jobsQueue.r = res.jobs.length;
+
+		$scope.lastUpdate = (new Date()).toLocaleTimeString();
 
 		if (view !== $scope.conf.viewName) {
 			return;

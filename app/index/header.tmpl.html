@@ -3,6 +3,13 @@
 	<div class="controls input-group">
 		<conf-button></conf-button>
 		<job-filter></job-filter>
+		<span 
+			class="input-group-addon last-update" 
+			bs-tooltip="'Last updated'" 
+			data-container="body" data-placement="bottom">
+			<i class="glyphicon glyphicon-time"></i>
+			&nbsp; {{lastUpdate}}
+		</span>
 	</div>
 
 <!--
