@@ -1,6 +1,9 @@
 angular
 	.module("JenkinsDashboard", ['mgcrea.ngStrap', 'ngResource', 'ngRoute'])
-	.config(function($locationProvider, $routeProvider) {
+	.config(function($locationProvider, $routeProvider, $compileProvider) {
+
+		// Work around angular unsafe links
+		$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|vnc):/);
 
 		// Dont use html5 when gulp is serving the pages.. since it just doesnt work :P
 		var useHtml5Mode = window.location.host.match('localhost:4000') === null;

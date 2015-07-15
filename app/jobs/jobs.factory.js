@@ -14,6 +14,7 @@ angular.module('JenkinsDashboard')
 		this.timeLeft = '';
 		this.completionPercentage = 0;
 		this.matchesFilter = true;
+		this.vncLink = '';
 
 		this.updateOrderValues();
 	}
@@ -44,6 +45,14 @@ angular.module('JenkinsDashboard')
 	}
 	Job.prototype.setBuild = function(b) { 
 		this.build = b;
+
+		if (b.description) {
+			var match = b.description.match(/vnc:\/\/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+/);
+			if (match !== null) {
+				this.vncLink = match[0];
+			}
+		}
+
 		this.lastBuildURL = ('url' in b) ? b.url + "console" : null;
 		return this.setMessage().setCulprit().setTimeLeftAndCompletionPercentage();
 	}

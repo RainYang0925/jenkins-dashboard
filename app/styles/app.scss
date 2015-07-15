@@ -204,6 +204,10 @@ body {
 		transition: width 1.5s linear;
 	}
 
+	span.vnc-link i:hover {
+		color: #ffcc00;
+	}
+
 	margin-bottom: 1px;
 	line-height: 3em;
 	height: 3em;
