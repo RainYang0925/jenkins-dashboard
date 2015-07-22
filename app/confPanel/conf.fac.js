@@ -14,7 +14,7 @@ angular.module('JenkinsDashboard')
 		fixedScreenSaver: "http://media.giphy.com/media/2FMZ918Q5JX8Y/giphy.gif",
 		topic: "dog loop",
 
-		sortBy: "name",
+		sortBy: "runningTimestamp",
 		viewName: "Boxfish-editor",
 		filter: "",
 

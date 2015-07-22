@@ -1,7 +1,8 @@
 angular.module('JenkinsDashboard')
 .factory('Jobs', function(Conf, $timeout) {
 
-	var SORT_TIMEOUT_MS = 500;
+	var SORT_TIMEOUT_MS = 500,
+		FAR_FUTURE_DATE = 3514604400000; // My 100th birthday!
 
 	function Job(name, color) {
 		this.name = name;
@@ -54,45 +55,63 @@ angular.module('JenkinsDashboard')
 		}
 
 		this.lastBuildURL = ('url' in b) ? b.url + "console" : null;
+
+
+		if (this.build != null && this.build.timestamp) {
+			if (b.timestamp !== this.build.timestamp) {
+				this.updateOrderValues();
+				sortJobs();
+			}
+		}
+
 		return this.setMessage().setCulprit().setTimeLeftAndCompletionPercentage();
 	}
+
 	Job.prototype.updateOrderValues = function() {
+		// Most recent built (highest timestamp) first
+		var inverseTimeStamp = (this.build != null && this.build.timestamp) ? FAR_FUTURE_DATE - this.build.timestamp : 0;
+
 		this.ord = {
 			broken: orderByBrokenFirst(this.color, this.name),
 			running: orderByRunningFirst(this.color, this.name),
-			name: this.name
+			name: this.name,
+			brokenTimestamp: orderByBrokenFirst(this.color, inverseTimeStamp),
+			runningTimestamp: orderByRunningFirst(this.color, inverseTimeStamp),
+			timestamp: inverseTimeStamp
 		}
+
 		return;
 	}
-	function orderByBrokenFirst(color, name) {
+
+	function orderByBrokenFirst(color, field) {
 		if (color === "red") {
-			return 0 + name;
+			return 1 + field;
 		} else if (color.match(/_anime/) !== null) {
-			return 1 + name;
+			return 2 + field;
 		} else if (color === "yellow") {
-			return 2 + name;
+			return 3 + field;
 		} else if (color === "aborted") {
-			return 3 + name;
+			return 4 + field;
 		} else if (color === "disabled" || color === "notbuilt") {
-			return 99 + name;
+			return 99 + field;
 		} else {
-			return 5 + name;
+			return 5 + field;
 		}
 	}
 
-	function orderByRunningFirst(color, name) {
+	function orderByRunningFirst(color, field) {
 		if (color.match(/_anime/) !== null) {
-			return 0 + name;
+			return 1 + field;
 		} else if (color === "red") {
-			return 1 + name;
+			return 2 + field;
 		} else if (color === "yellow") {
-			return 2 + name;
+			return 3 + field;
 		} else if (color === "aborted") {
-			return 3 + name;
+			return 4 + field;
 		} else if (color === "disabled" || color === "notbuilt") {
-			return 99 + name;
+			return 99 + field;
 		} else {
-			return 6 + name;
+			return 6 + field;
 		}
 	}
 
