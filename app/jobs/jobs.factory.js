@@ -44,7 +44,9 @@ angular.module('JenkinsDashboard')
 		}
 		return this;
 	}
+
 	Job.prototype.setBuild = function(b) { 
+		var oldBuild = this.build;
 		this.build = b;
 
 		if (b.description) {
@@ -56,9 +58,8 @@ angular.module('JenkinsDashboard')
 
 		this.lastBuildURL = ('url' in b) ? b.url + "console" : null;
 
-
-		if (this.build != null && this.build.timestamp) {
-			if (b.timestamp !== this.build.timestamp) {
+		if (this.build.timestamp != null) {
+			if (oldBuild == null || oldBuild.timestamp !== this.build.timestamp) {
 				this.updateOrderValues();
 				sortJobs();
 			}
@@ -79,11 +80,11 @@ angular.module('JenkinsDashboard')
 			runningTimestamp: orderByRunningFirst(this.color, inverseTimeStamp),
 			timestamp: inverseTimeStamp
 		}
-
-		return;
 	}
 
 	function orderByBrokenFirst(color, field) {
+		field = field + "";
+
 		if (color === "red") {
 			return 1 + field;
 		} else if (color.match(/_anime/) !== null) {
@@ -100,6 +101,8 @@ angular.module('JenkinsDashboard')
 	}
 
 	function orderByRunningFirst(color, field) {
+		field = field + "";
+
 		if (color.match(/_anime/) !== null) {
 			return 1 + field;
 		} else if (color === "red") {
