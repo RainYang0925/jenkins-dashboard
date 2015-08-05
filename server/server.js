@@ -29,7 +29,7 @@ fs.readFile('auth.txt', 'utf8', function (err, data) {
 
 
 var cookieSecret;
-fs.readFile('/etc/prezi/jenkinsdashboard/cookie_secret.txt', 'utf8', function(err, date) {
+fs.readFile('/etc/prezi/jenkinsdashboard/cookie_secret.txt', 'utf8', function(err, data) {
 	if (err) {
 		console.log('## ERROR: cookie_secret.txt not found!\n## Please provide the cookie secret for prezi godauth.')
 		console.log('## Note: if you\'re only running it on localhost for yourself only, you dont need it.')
