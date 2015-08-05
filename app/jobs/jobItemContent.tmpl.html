@@ -21,13 +21,13 @@
 
 	<span>{{ job.culprit }}</span>
 
-	
-	<span ng-if="job.vncLink && job.isBuilding()"
-		bs-tooltip="'Open VNC at {{job.vncLink}}'" data-container="body" data-placement="bottom"
-		class="vnc-link">
-			<a href="{{ job.vncLink }}">
-				<i class="glyphicon glyphicon-film"></i>
-		</a></span>
+	<span ng-if="job.vncLink && job.isBuilding()" bs-tooltip="'Open VNC at {{job.vncLink}}'" 
+		data-container="body" data-placement="bottom" class="vnc-link">
+
+		<a href="{{ job.vncLink }}">
+			<i class="glyphicon glyphicon-film"></i>
+		</a>
+	</span>
 
 	<span>
 		<a target="_blank" href="{{job.lastBuildURL}}">

@@ -2,7 +2,8 @@ var io = require('socket.io').listen(4001),
 	fs = require('fs'),
 	clientsLength = 0;
 	clients = {},
-	jenkins = require('./jenkins-helper');
+	jenkins = require('./jenkins-helper'),
+	godAuth = require('prezi-godauth');
 
 var credentials;
 fs.readFile('auth.txt', 'utf8', function (err, data) {
@@ -26,22 +27,44 @@ fs.readFile('auth.txt', 'utf8', function (err, data) {
 	}
 });
 
+
+var cookieSecret;
+fs.readFile('/etc/prezi/jenkinsdashboard/cookie_secret.txt', 'utf8', function(err, date) {
+	if (err) {
+		console.log('## ERROR: cookie_secret.txt not found!\n## Please provide the cookie secret for prezi godauth.')
+		console.log('## Note: if you\'re only running it on localhost for yourself only, you dont need it.')
+	} else {
+		cookieSecret = data.trim();
+	}
+});
+
 jenkins.setDebug(true);
 
+
+var authenticator = godAuth.create(cookieSecret),
+	noop = function() {}, fakeResponse = { writeHead: noop, end: noop };
+
 io.sockets.on('connection', function(socket) {
+
+	if (socket.conn.remoteAddress !== "127.0.0.1" && authenticator.authenticateRequest(socket.handshake, fakeResponse) === null) {
+		console.log('### Closing unauthorized socket connection from ' + socket.conn.remoteAddress);
+		socket.disconnect('unauthorized');
+		return;
+	}
+
 	clients[socket.id] = socket.conn.remoteAddress;
 	clientsLength++;
 	jenkins.log('### ('+ clientsLength +') New client connected ['+ socket.id +'] from '+ socket.conn.remoteAddress);
-
-	function errorFromJenkins(error) {
-		socket.emit('j error', error);
-		jenkins.log('### error from jenkins: ['+ error +']');
-	}
 
 	socket.on('disconnect', function() {
 		clientsLength--;
 		jenkins.log('### ('+ clientsLength +') Client disconnected: ['+ socket.id +']');
 	});
+
+	function errorFromJenkins(error) {
+		socket.emit('j error', error);
+		jenkins.log('### error from jenkins: ['+ error +']');
+	}
 
 	socket.on('j update-view', function(view) {
 		jenkins.updateView(socket.id, view).then(function(res) {
