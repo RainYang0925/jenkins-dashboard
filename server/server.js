@@ -28,21 +28,19 @@ fs.readFile('auth.txt', 'utf8', function (err, data) {
 });
 
 
-var cookieSecret;
+var authenticator,
+	noop = function() {}, fakeResponse = { writeHead: noop, end: noop };
+
 fs.readFile('/etc/prezi/jenkinsdashboard/cookie_secret.txt', 'utf8', function(err, data) {
 	if (err) {
 		console.log('## ERROR: cookie_secret.txt not found!\n## Please provide the cookie secret for prezi godauth.')
 		console.log('## Note: if you\'re only running it on localhost for yourself only, you dont need it.')
 	} else {
-		cookieSecret = data.trim();
+		authenticator = godAuth.create(data.trim());
 	}
 });
 
 jenkins.setDebug(true);
-
-
-var authenticator = godAuth.create(cookieSecret),
-	noop = function() {}, fakeResponse = { writeHead: noop, end: noop };
 
 io.sockets.on('connection', function(socket) {
 
