@@ -206,12 +206,6 @@ angular.module("JenkinsDashboard")
 	window.check = checkIfLunch;
 
 	Socket.on("j update-view", function(res, view) {
-
-		if (res.jobs == null) { 
-			console.log('WHY EMPTY', res);
-			return;
-		}
-
 		$scope.stats.views.a++;
 		$scope.stats.jobsQueue.r = res.jobs.length;
 
