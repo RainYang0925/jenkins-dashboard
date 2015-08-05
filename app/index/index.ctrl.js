@@ -95,7 +95,12 @@ angular.module("JenkinsDashboard")
 
 	function requestUpdateView() {
 		if ($scope.disconnected) { console.log($ts(), '!! Disconnected !!'); return; }
-		Socket.emit("j update-view", Conf.val.viewName);
+
+		if (Conf.val.viewName.match(/label:/)) {
+			Socket.emit("j update-label", Conf.val.viewName.substr(6));
+		} else {
+			Socket.emit("j update-view", Conf.val.viewName);
+		}
 		$scope.stats.views.r++;
 	}
 
@@ -201,12 +206,18 @@ angular.module("JenkinsDashboard")
 	window.check = checkIfLunch;
 
 	Socket.on("j update-view", function(res, view) {
+
+		if (res.jobs == null) { 
+			console.log('WHY EMPTY', res);
+			return;
+		}
+
 		$scope.stats.views.a++;
 		$scope.stats.jobsQueue.r = res.jobs.length;
 
 		$scope.lastUpdate = (new Date()).toLocaleTimeString();
 
-		if (view !== $scope.conf.viewName) {
+		if (view !== $scope.conf.viewName && "label:" + view !== $scope.conf.viewName) {
 			return;
 		}
 

@@ -20,3 +20,9 @@ run gulp, open localhost:4000 in the browser, click configure (or the cogwheel i
 of the window) and insert localhost:4001 as server address.
 
 In order to run the server, you will need that `/auth.txt` file.
+
+## Use it
+An instance is deployed on https://jd.prezi.com/, you should use that one if you just want to see how your jobs are doing.
+
+#### Hidden feature: list jobs running on machines with a given label
+You need to manually enter the "label:labelName" in the view name URL part, eg: https://jd.prezi.com/label:jenkins_boxfish/runningTimestamp

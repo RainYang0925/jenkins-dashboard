@@ -249,6 +249,8 @@ function cachedApi(pathConstructor, ttl, force) {
 jh.updateAllJobs   = cachedApi('/api/json', 1800);
 jh.updateView      = cachedApi(function(id, name) { return '/view/'+ name +'/api/json';}, 8);
 
+jh.updateLabel     = cachedApi(function(id, name) { return '/label/'+ name +'/api/json';}, 8);
+
 jh.updateJob       = cachedApi(function(id, name) { return '/job/'+ name +'/api/json'; }, 3600);
 jh.updateJobFast   = cachedApi(function(id, name) { return '/job/'+ name +'/api/json'; }, 2, true);
 

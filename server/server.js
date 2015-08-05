@@ -70,6 +70,13 @@ io.sockets.on('connection', function(socket) {
 		}, errorFromJenkins);
 	});
 
+	socket.on('j update-label', function(label) {
+		jenkins.updateLabel(socket.id, label).then(function(res) {
+			res.jobs = res.tiedJobs;
+			socket.emit('j update-view', res, label);
+		}, errorFromJenkins);
+	});
+
 	socket.on('j update-job', function(job) {
 		jenkins.updateJob(socket.id, job).then(function(res) {
 			socket.emit('j update-job', res);
