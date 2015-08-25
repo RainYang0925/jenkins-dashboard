@@ -1,9 +1,8 @@
 var Q = require('q'),
 	NodeCache = require('node-cache'),
-	jh = {},
 	https = require('https'),
-	separator = "\n###############################################################\n",
-	fixtures = require('./fixtures');
+	fixtures = require('./fixtures'),
+	jh = {};
 
 https.globalAgent.maxSockets = Infinity;
 
@@ -11,14 +10,6 @@ module.exports = jh;
 
 // If a jenkins request does not reply under this time (and we are queueing them up), force a refresh
 var FORCE_REFRESH_MS = 20 * 1000;
-
-jh.cache = new NodeCache({ stdTTL: 120 });
-jh.debug = false;
-
-jh.setCredentials = function(data) { 
-	this.authBase64 = 'Basic ' + (new Buffer(data).toString('base64'))
-}
-jh.setDebug = function(v) { this.debug = v; }
 
 jh.log = log = function() {
 	if (!jh.debug) return;
@@ -29,26 +20,44 @@ jh.log = log = function() {
 	console.log.apply(this, [dateString].concat(Array.prototype.slice.apply(arguments)));
 }
 
+jh.cache = new NodeCache({ stdTTL: 120 });
+jh.debug = true;
+
+jh.setCredentials = function(data) { 
+	this.authBase64 = 'Basic ' + (new Buffer(data).toString('base64'));
+}
+jh.setURL = function(url) {
+	this.url = url;
+	log('Using jenkins api from '+ url);
+}
+jh.setDebug = function(v) { this.debug = v; }
+jh.setUseFixtures = function(v) {
+	if (v) log('Not making any http call to jenkins: using fixtures');
+	this.useFixtures = v; 
+}
+
 jh.get = function(path) {
 	var def = Q.defer(),
 		results = '',
 		options = {
-			host: 'jenkins.prezi.com',
+			host: this.url,
 			secureProtocol: 'SSLv3_method',
 			path: (path).replace(/\s/g,"%20"),
-			headers: { 'Authorization': this.authBase64 },
 			timeout: FORCE_REFRESH_MS
 		};
-
+		
+	if (typeof(this.authBase64) !== 'undefined') {
+		options.headers = { 'Authorization': this.authBase64 };
+	}
 
 	// Use the fixtures? No jenkins requests at all.
-	if (false) {
+	if (this.useFixtures) {
 
 		// Finished = true -> no building job, 
 		// seconds > 30 -> every 30s it switches from building to finished
 		var finished = (new Date()).getSeconds() > 30;
 
-		if (path === "/view/Boxfish-Koi/api/json") {
+		if (path.match(/^\/view/) !== null) {
 			log("@@@@ VIEW fixture - finished", finished);
 			if (finished)
 				def.resolve(JSON.stringify(fixtures['view-short']));
@@ -104,7 +113,7 @@ jh.get = function(path) {
 		log("# https resp " + duration + "ms " + res.statusCode + " " + path);
 
 		if (res.statusCode === 401) {
-			console.log(separator, 'Got a 401 from jenkins, check your credentials', separator);
+			console.log("#### Got a 401 from jenkins, check your credentials");
 		}
 
 		res.on("data", function(body) {
@@ -112,6 +121,7 @@ jh.get = function(path) {
 				results += body.toString();
 			}
 		});
+
 		res.on("end", function() {
 			if (res.statusCode === 200) {
 				def.resolve(results);
@@ -120,19 +130,6 @@ jh.get = function(path) {
 				def.reject();
 			}
 		});
-
-		/*
-		if (res.statusCode === 401) {
-			console.log(separator, 'Got a 401 from jenkins, check your credentials', separator);
-		} else if (res.statusCode === 200) {
-			res.on("data", function(body) {
-				results += body.toString();
-			});
-		} else {
-			log("@@@ Error: jenkins replied with status code: "+ res.statusCode);
-			def.reject();
-		}
-		*/
 	});
 
 	req.on("error", function(e) {
@@ -155,7 +152,6 @@ var ttlForPath = {},
 	firstQueuedPromiseForPath = {};
 
 function handleAllPromises(path, action, response) {
-
 	var ids = [];
 	for (var i in queuedIdsForPath[path])
 		ids.push(i);
@@ -200,8 +196,8 @@ function cachedApi(pathConstructor, ttl, force) {
 			delete queuedIdsForPath[path];
 		}
 
-		if ((path in cached)) {
-			def.resolve(cached[path]);
+		if (typeof(cached) !== "undefined" && Object.keys(cached).length > 0) {
+			def.resolve(cached);
 
 		} else if (isRequesting[path]) {
 

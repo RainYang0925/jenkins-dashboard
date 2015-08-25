@@ -10,8 +10,8 @@ var connectLr         = require('connect-livereload'),
 	lrServer          = require('tiny-lr')(),
 	permitIndexReload = true,
 	plugins           = require('gulp-load-plugins')(),
-	server            = require('gulp-develop-server');
-
+	server            = require('gulp-develop-server'),
+	merge             = require('merge2');
 
 function notifyLiveReload() {
 	if (permitIndexReload) {
@@ -87,28 +87,26 @@ gulp.task('templates', function() {
 });
 
 gulp.task('copy build', function() {
-
-	gulp
+	return gulp
 		.src(expressRoot + '/**/*')
 		.pipe(gulp.dest(buildRoot));
 
 });
 
 gulp.task('copy libs', function() {
-
-	gulp
+	var assets = gulp
 		.src('./assets/bootstrap/dist/css/bootstrap.min.css')
 		.pipe(gulp.dest(expressRoot + '/styles/assets'));
 
-	gulp
+	var fonts = gulp
 		.src('./assets/bootstrap/dist/fonts/*')
 		.pipe(gulp.dest(expressRoot + '/styles/fonts'));
 
-	gulp
+	var imgs = gulp
 		.src('./app/styles/img/*')
 		.pipe(gulp.dest(expressRoot + '/styles/img'));
 
-	return gulp
+	var js = gulp
 		.src([
 			'./assets/angular/angular.min.js', 
 			'./assets/angular-route/angular-route.min.js', 
@@ -118,7 +116,9 @@ gulp.task('copy libs', function() {
 			'./assets/bootstrap/dist/css/bootstrap.min.css',
 			'./assets/socket.io-client/socket.io.js'
 		])
-		.pipe(gulp.dest(expressRoot + '/assets'))
+		.pipe(gulp.dest(expressRoot + '/assets'));
+		
+	return merge([assets, fonts, imgs, js]);
 });
 
 gulp.task('index', function() {
@@ -159,6 +159,14 @@ gulp.task('server start', function() {
 	});
 });
 
+gulp.task('server fixtures', function() {
+	return server.listen({ 
+		path: 'server/server.js', 
+		execArgv: ['--harmony'],
+		args: ['--useFixtures']
+	});
+});
+
 gulp.task('server restart', function() {
 	return gulp
 		.src('server/server.js')
@@ -169,11 +177,13 @@ gulp.task('build', function() {
 	plugins.runSequence('clean', 'copy libs', 'templates', 'js app', 'styles', 'index', 'copy build');
 });
 
-// TODO: Not quite sure the tasks get execute properly, race conditions? Use https://www.npmjs.org/package/gulp-run-sequence ?
-gulp.task('default', ['express server', 'live reload', 'copy libs', 'js app', 'styles', 'index', 'server start'], function () {
+gulp.task('fixtures', ['express server', 'live reload', 'copy libs', 'js app', 'styles', 'index', 'server fixtures'], setupWatchers);
+gulp.task('default', ['express server', 'live reload', 'copy libs', 'js app', 'styles', 'index', 'server start'], setupWatchers);
+
+function setupWatchers() {
 	gulp.watch(['app/styles/**/*', '!app/styles/fonts/**/*'], ['styles']);
 	gulp.watch('app/index.html', ['index']);
 	gulp.watch(['app/**/*tmpl.html', 'app/*js', 'app/**/*js'], ['js app']);
-	gulp.watch(['server/*js', 'server/**/*js'], ['server restart']);
+	gulp.watch(['server/*js'], ['server restart']);
 	plugins.util.log(plugins.util.colors.red('### Dashboard ready on http://localhost:' + expressPort));
-});
+}

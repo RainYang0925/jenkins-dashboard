@@ -3,49 +3,102 @@ var io = require('socket.io').listen(4001),
 	clientsLength = 0;
 	clients = {},
 	jenkins = require('./jenkins-helper'),
-	godAuth = require('prezi-godauth');
+	conf = require('nconf');
 
-var credentials;
-fs.readFile('auth.txt', 'utf8', function (err, data) {
-	if (err) {
+var DEFAULT_CONF_NAME = "jd.conf.json",
+	defaults = {
+		debug: true, // Verbose output,
+		useFixtures: false // Dont call jenkins, use fixtures instead
+	};
 
-		fs.readFile('/etc/prezi/jenkinsdashboard/auth.txt', 'utf8', function (_err, _data) {
-			if (_err) {
-				console.log('## ERROR: auth.txt not found!\nPlease provide credentials using user:pass format.');
-				process.exit(1);
-				throw err;
-			}
+function error(msg) { jenkins.log('### ERROR ###', msg); }
 
-			jenkins.setCredentials(_data.trim());
-			console.log('###### Jenkins dashboard server up and running.');
-			return;
-		});
 
-	} else {
-		jenkins.setCredentials(data.trim());
-		console.log('###### Jenkins dashboard server up and running.');
-	}
-});
+conf.argv();
+
+// If there's conf, it must come from argv
+if (conf.get('conf')) {
+	conf.file(conf.get('conf'));
+} else {
+	conf.file(DEFAULT_CONF_NAME);
+}
+
+conf.defaults(defaults);
+jenkins.setDebug(conf.get('debug'));
+jenkins.setUseFixtures(conf.get('useFixtures'));
+
+var jenkinsURL = conf.get('jenkinsURL');
+if (typeof(jenkinsURL) === 'undefined') {
+	error('no jenkinsURL found in the conf file (' + conf.get('conf') + ')');
+	process.exit(1);
+} else {
+	jenkins.setURL(jenkinsURL);
+}
 
 
 var authenticator,
-	noop = function() {}, fakeResponse = { writeHead: noop, end: noop };
-
-fs.readFile('/etc/prezi/jenkinsdashboard/cookie_secret.txt', 'utf8', function(err, data) {
-	if (err) {
-		console.log('## ERROR: cookie_secret.txt not found!\n## Please provide the cookie secret for prezi godauth.')
-		console.log('## Note: if you\'re only running it on localhost for yourself only, you dont need it.')
+	noop = function() {}, 
+	fakeResponse = { writeHead: noop, end: noop },
+	wsAuth = conf.get('wsAuth'),
+	godAuth;
+if (typeof(wsAuth) === 'undefined') {
+	jenkins.log('No websocket auth configured.')
+} else {
+	if (typeof(wsAuth.type) === 'undefined' || typeof(wsAuth.fileName) === 'undefined') {
+		error('Trying to configure websocket auth but missing type or fileName fields in wsAuth section');
+	} else if (wsAuth.type !== "preziGodAuth") {
+		error('The only websocket auth scheme supported is preziGodAuth');
 	} else {
-		authenticator = godAuth.create(data.trim());
+		godAuth = require('prezi-godauth');
+		fs.readFile(wsAuth.fileName, 'utf8', function(err, data) {
+			if (err) {
+				error(wsAuth.fileName + ' not found!');
+				error('Please provide the cookie secret for prezi godauth.');
+				error('if you\'re only running it on localhost for yourself only, you dont need it and you can delete the section from your conf.')
+			} else {
+				jenkins.log('Websocket auth credentials picked up from ' + wsAuth.fileName);
+				authenticator = godAuth.create(data.trim());
+			}
+		});
 	}
-});
+}
 
-jenkins.setDebug(true);
+
+var auth = conf.get('jenkinsAuth');
+if (typeof(auth) === 'undefined') {
+	jenkins.log('No auth configured.')
+	jenkins.log('Jenkins dashboard server up and running.');
+} else {
+	if (typeof(auth.type) === 'undefined' || typeof(auth.fileName) === 'undefined') {
+		error('Trying to configure auth but missing type or fileName fields in auth section');
+	} else if (auth.type !== "basic") {
+		error('The only auth scheme supported is http basic');
+	} else {
+		fs.readFile(auth.fileName, 'utf8', function (_err, _data) {
+			if (_err) {
+				error(auth.fileName + ' not found!');
+				error('Please provide credentials using user:pass format.');
+				process.exit(1);
+				throw err;
+			}
+			
+			jenkins.log('Jenkins auth credentials picked up from ' + auth.fileName);
+			jenkins.setCredentials(_data.trim());
+			jenkins.log('------- Jenkins dashboard server up and running -------');
+			return;
+		});
+	}
+}
+
 
 io.sockets.on('connection', function(socket) {
 
-	if (socket.conn.remoteAddress !== "127.0.0.1" && authenticator.authenticateRequest(socket.handshake, fakeResponse) === null) {
-		console.log('### Closing unauthorized socket connection from ' + socket.conn.remoteAddress);
+	if (typeof(wsAuth) !== "undefined" && 
+		wsAuth.type === "preziGodAuth" &&
+		socket.conn.remoteAddress !== "127.0.0.1" && 
+		authenticator.authenticateRequest(socket.handshake, fakeResponse) === null
+	) {
+		error('### Closing unauthorized socket connection from ' + socket.conn.remoteAddress);
 		socket.disconnect('unauthorized');
 		return;
 	}
@@ -61,7 +114,7 @@ io.sockets.on('connection', function(socket) {
 
 	function errorFromJenkins(error) {
 		socket.emit('j error', error);
-		jenkins.log('### error from jenkins: ['+ error +']');
+		error('### error from jenkins: ['+ error +']');
 	}
 
 	socket.on('j update-view', function(view) {

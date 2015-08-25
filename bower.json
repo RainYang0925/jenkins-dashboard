@@ -1,15 +1,15 @@
 {
   "name": "jenkins-dashboard",
-  "version": "0.0.1",
+  "version": "0.99.0",
   "authors": [
-    "Simone Fonda <simone.fonda@prezi.com>"
+    "Simone Fonda <simone.fonda@gmail.com>"
   ],
   "dependencies": {
-    "angular": "1.4.1",
-    "angular-route": "1.4.1",
-    "angular-resource": "1.4.1",
-    "angular-strap": "2.2.4",
-    "socket.io-client": "1.3.5",
-    "bootstrap": "3.3.5"
+    "angular": "~1.4.4",
+    "angular-route": "~1.4.4",
+    "angular-resource": "~1.4.4",
+    "angular-strap": "~2.3.1",
+    "socket.io-client": "~1.3.6",
+    "bootstrap": "~3.3.5"
   }
 }
