@@ -121,7 +121,7 @@ gulp.task('copy libs', function() {
 	return merge([assets, fonts, imgs, js]);
 });
 
-gulp.task('index', function() {
+gulp.task('index', ['copy libs', 'js app', 'styles'], function() {
 	var path = expressRoot;
 
 	function inject(glob, tag) {
@@ -177,8 +177,8 @@ gulp.task('build', function() {
 	plugins.runSequence('clean', 'copy libs', 'templates', 'js app', 'styles', 'index', 'copy build');
 });
 
-gulp.task('fixtures', ['express server', 'live reload', 'copy libs', 'js app', 'styles', 'index', 'server fixtures'], setupWatchers);
-gulp.task('default', ['express server', 'live reload', 'copy libs', 'js app', 'styles', 'index', 'server start'], setupWatchers);
+gulp.task('fixtures', ['express server', 'live reload', 'index', 'server fixtures'], setupWatchers);
+gulp.task('default', ['express server', 'live reload', 'index', 'server start'], setupWatchers);
 
 function setupWatchers() {
 	gulp.watch(['app/styles/**/*', '!app/styles/fonts/**/*'], ['styles']);
