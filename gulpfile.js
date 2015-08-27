@@ -43,13 +43,13 @@ gulp.task('clean', function() {
 		.on('error', plugins.util.log);
 });
 
-gulp.task('js app', ['templates'], function() {
+gulp.task('js app', ['copy libs', 'templates'], function() {
 	return gulp
 		.src(['app/app.js', 'app/**/*.js', expressRoot + '/tmp.debug/templates.js'])
 		.pipe(plugins.plumber())
 		.pipe(plugins.concat('app.js'))
 		// If you need to check the compiled source file (not annotated, not uglified):
-		// .pipe(gulp.dest(expressRoot + '/tmp.debug/'))
+		.pipe(gulp.dest(expressRoot + '/tmp.debug/'))
 		.pipe(plugins.ngAnnotate())
 		.pipe(plugins.uglify())
 		.pipe(gulp.dest(expressRoot + '/app'))
@@ -105,6 +105,10 @@ gulp.task('copy libs', function() {
 	var imgs = gulp
 		.src('./app/styles/img/*')
 		.pipe(gulp.dest(expressRoot + '/styles/img'));
+
+	var imgs = gulp
+		.src('jd.conf.json')
+		.pipe(gulp.dest(expressRoot));
 
 	var js = gulp
 		.src([
@@ -184,6 +188,7 @@ function setupWatchers() {
 	gulp.watch(['app/styles/**/*', '!app/styles/fonts/**/*'], ['styles']);
 	gulp.watch('app/index.html', ['index']);
 	gulp.watch(['app/**/*tmpl.html', 'app/*js', 'app/**/*js'], ['js app']);
+	gulp.watch(['jd.conf.json'], ['js app', 'server restart']);
 	gulp.watch(['server/*js'], ['server restart']);
 	plugins.util.log(plugins.util.colors.red('### Dashboard ready on http://localhost:' + expressPort));
 }

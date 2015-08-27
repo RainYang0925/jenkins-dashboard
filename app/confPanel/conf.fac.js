@@ -1,8 +1,8 @@
 angular.module('JenkinsDashboard')
-.factory('Conf', function($rootScope, $modal, $route, $routeParams, $location) {
+.factory('Conf', function($rootScope, $modal, $route, $routeParams, $location, $resource) {
 
 	var defaults = {
-		address: "jd.prezi.com:4000",
+		address: "localhost:4001",
 
 		// These two are mutually exclusive
 		useScreenSaver: true, 
@@ -23,6 +23,9 @@ angular.module('JenkinsDashboard')
 		isSpeechSynthesisSupported: false,
 		muteForMinutes: 20,
 		muted: false,
+		
+		// key-val: name: pronounced name
+		pronunciationTable: {},
 
 		voiceTemplates: {
 			brokenBuild: [
@@ -111,6 +114,29 @@ angular.module('JenkinsDashboard')
 		// At this stage the $routeParams have not been read yet .. :(
 		return ret;
 	}
+	
+	function readConfFile() {
+		var confResource = $resource("jd.conf.json");
+		
+		confResource.get({}, function(c){ 
+			if ('serverURL' in c) {
+				conf.val.address = c.serverURL;
+			}
+			
+			if ('pronunciationTable' in c) {
+				conf.val.pronunciationTable = c.pronunciationTable;
+			} else {
+				console.log('## wtf not there', c);
+			}
+
+			$rootScope.$emit('server-url-ready');
+			save();
+		}, function(){
+			$rootScope.$emit('server-url-ready');
+		});
+	}
+	
+	readConfFile();
 
 	var conf = {
 		defaults : defaults,

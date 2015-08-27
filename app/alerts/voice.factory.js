@@ -1,22 +1,10 @@
 angular.module('JenkinsDashboard')
 .factory('Voice', function(Conf, $rootScope) {
-	
-	var culpritPronunciationTable = {
-		"Matyas Barsi": "Matjas Barshi",
-		"rosadam": "Roz",
-		"OmarEl-Mohandes": "omar dee ninja",
-		"khaled sami": "khaleds ami",
-		"Adam Peresztegi": "flash",
-		"simone fonda": "simohneh fonda",
-		"Peter Sipos": "sheepee",
-		"david nemeth csoka": "dahvid nemeth tschoka",
-		"Lorant Pinter": "Lorant Peen ther",
-		"Dzso Pengo": "Joe",
-        "Viktor Nagy": "Vic"
-	};
 
 	function fixSpokenCulpritName(culprit) {
-		var result = culprit
+		var result = culprit,
+			culpritPronunciationTable = Conf.val.pronunciationTable;
+		
 		for (var k in culpritPronunciationTable) {
 			result = result.replace(k, culpritPronunciationTable[k]);
 		}
