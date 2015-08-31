@@ -1,0 +1,20 @@
+{
+	"jenkinsURL": "the.jenkins.url",
+	"jenkinsAuth": {
+		"type": "basic",
+		"fileName": "/path/to/auth.txt"
+	},
+	"wsAuth": {
+		"type": "preziGodAuth",
+		"fileName": "/path/to/cookie_secret.txt"
+	},
+	"debug": true,
+	"useFixtures": false,
+	
+	"serverURL": "localhost:4001",
+	
+	"pronunciationTable": {
+		"Someone": "Someone else",
+		"important job": "ALL THE THINGS"
+	}
+}
