@@ -30,6 +30,10 @@ jh.setURL = function(url) {
 	this.url = url;
 	log('Using jenkins api from '+ url);
 }
+jh.setPORT = function(port) {
+	this.port = port;
+	log('Using jenkins api on port ' + port);
+}
 jh.setDebug = function(v) { this.debug = v; }
 jh.setUseFixtures = function(v) {
 	if (v) log('Not making any http call to jenkins: using fixtures');
@@ -41,6 +45,7 @@ jh.get = function(path) {
 		results = '',
 		options = {
 			host: this.url,
+			port: this.port,
 			secureProtocol: 'SSLv3_method',
 			path: (path).replace(/\s/g,"%20"),
 			timeout: FORCE_REFRESH_MS
