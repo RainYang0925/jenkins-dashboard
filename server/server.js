@@ -35,6 +35,13 @@ if (typeof(jenkinsURL) === 'undefined') {
 	jenkins.setURL(jenkinsURL);
 }
 
+var jenkinsPORT = conf.get('jenkinsPORT');
+if (typeof(jenkinsPORT) === 'undefined') {
+	jenkins.log('no jenkinsPORT found in the conf file (' + conf.get('conf') + ') use default 443');
+    jenkinsPORT = 443
+}
+jenkins.setPORT(jenkinsPORT);
+
 
 var authenticator,
 	noop = function() {}, 

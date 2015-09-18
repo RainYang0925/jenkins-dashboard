@@ -1,5 +1,6 @@
 {
 	"jenkinsURL": "the.jenkins.url",
+	"jenkinsPORT": 443,
 	"jenkinsAuth": {
 		"type": "basic",
 		"fileName": "/path/to/auth.txt"
