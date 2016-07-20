@@ -4,11 +4,19 @@ angular.module("JenkinsDashboard")
 	var VIEW_REFRESH_MS = 9000,
 		BUILD_FAST_REFRESH_MS = 2000;
 
+	var STATUS_SUCCESS = 0;
+	var STATUS_UNSTABLE = 1;
+	var STATUS_FAILURE = 2;
+
 	$scope.pageTitle = "Jenkins dashboard";
 	$scope.conf = Conf.val;
-	$scope.somethingBroken = false;
+	$scope.boardStatus = STATUS_SUCCESS;
 	$scope.disconnected = true;
 	$scope.lastUpdate = '';
+
+	$scope.isBoardBroken = function() { return $scope.boardStatus == STATUS_FAILURE; }
+	$scope.isBoardUnstable = function() { return $scope.boardStatus == STATUS_UNSTABLE; }
+	$scope.isBoardOk = function() { return $scope.boardStatus == STATUS_SUCCESS; }
 
 	$scope.Jobs = Jobs;
 	$scope.$watch('conf.order', Jobs.sort);
@@ -67,7 +75,7 @@ angular.module("JenkinsDashboard")
 	function clearJobs() {
 		clearJobQueue();
 		clearJobsTimeouts();
-		$scope.somethingBroken = false;
+		$scope.boardStatus = STATUS_SUCCESS;
 		Jobs.clear();
 	}
 
@@ -216,7 +224,7 @@ angular.module("JenkinsDashboard")
 		}
 
 		clearJobsTimeouts();
-		$scope.somethingBroken = false;
+		$scope.boardStatus = STATUS_SUCCESS;
 		var somethingBuilding = false;
 		for (var j in res.jobs) {
 
@@ -236,13 +244,18 @@ angular.module("JenkinsDashboard")
 				requestUpdateJobQueued(job.name);
 			}
 
-			if (currentJob.isBroken()) {
+			if (currentJob.isUnstable() && $scope.boardStatus < STATUS_UNSTABLE) {
+				$scope.boardStatus = STATUS_UNSTABLE;
+			} else if (currentJob.isFailure()) {
+				$scope.boardStatus = STATUS_FAILURE;
+			}
+
+			if ($scope.boardStatus != STATUS_SUCCESS) {
 				ScreenSaver.hide();
-				$scope.somethingBroken = true;
 			}
 		}
 
-		if (!somethingBuilding && !$scope.somethingBroken) {
+		if (!somethingBuilding && $scope.boardStatus == STATUS_SUCCESS) {
 			ScreenSaver.startTimer();
 		}
 
