@@ -1,10 +1,10 @@
 $green: rgb(92, 184, 92);
 $red: rgb(217, 83, 79);
-$orange: rgb(240, 173, 78);
+$orange: rgb(240, 173, 58);
 $blue: rgb(66, 139, 202);
 
 $base-margin: 6px;
-$header-height: 6 * $base-margin; 
+$header-height: 6 * $base-margin;
 
 
 .fixed {
@@ -77,7 +77,7 @@ body.modal-open .blur {
 	transition: opacity 0.3s ease-in;
 
 	img.gif {
-		width: 100%; 
+		width: 100%;
 		cursor: none;
 	}
 	.logo {
@@ -105,11 +105,15 @@ body {
 	-o-user-select: none;
 	user-select: none;
 
-	&.broken { 
-		background-color: $red; 
+	&.broken {
+		background-color: $red;
 		.title { color: $red; }
 	}
-	&.ok { 
+	&.unstable {
+		background-color: $orange;
+		.title { color: $orange; }
+	}
+	&.ok {
 		background-color: $green;
 		.title { color: $green; }
 	}
@@ -194,7 +198,7 @@ body {
 	&.job-building .job-progress {
 		display: block;
 		width: 0%;
-		position: absolute; 
+		position: absolute;
 		line-height: 3em;
 		height: 3em;
 		background: rgb(66, 139, 202);
@@ -271,11 +275,11 @@ body {
 	transform: translateX(-50%) translateY(-50%)
 }
 
-@-webkit-keyframes spin { 
+@-webkit-keyframes spin {
 	0% { -webkit-transform: rotate(0deg); }
   100% { -webkit-transform: rotate(360deg); }
 }
-@keyframes spin { 
+@keyframes spin {
 	0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }

@@ -10,7 +10,7 @@
 		<!-- inject:app-style:css --><!-- endinject -->
 		<!-- inject:assets:css --><!-- endinject -->
 	</head>
-	<body ng-class="{ 'broken': somethingBroken, 'ok': !somethingBroken, 'jd-modal': blur }">
+	<body ng-class="{ 'broken': isBoardBroken(), 'unstable': isBoardUnstable(), 'ok': isBoardOk(), 'jd-modal': blur }">
 
 		<visual-alert></visual-alert>
 		<socket-monitor></socket-monitor>
